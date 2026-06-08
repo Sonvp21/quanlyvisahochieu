@@ -49,7 +49,7 @@ class SendExpiryNotifications extends Command
             'visa_count' => $visaCount,
             'total_count' => $totalCount,
             'details' => $this->sentDetails,
-            'duration_seconds' => $duration,
+            'duration_seconds' => (int) $duration,
             'run_at' => $runAt,
         ]);
 
@@ -317,260 +317,124 @@ class SendExpiryNotifications extends Command
 
     protected function shouldSendNotification($student, $type, $notifiableId, $isExpired)
     {
+        $document = $type === 'passport' ? $student->passport : $student->visa;
+        $expiry   = Carbon::parse($document->expiry_date)->endOfDay();
+        $now      = Carbon::now();
+
+        $daysLeft    = (int) $now->diffInDays($expiry, false); // âm = đã hết hạn
+        $isExpired   = $daysLeft < 0;
+        $isExpiring  = $daysLeft >= 0;
+
+        // Các mốc ngày sẽ gửi (còn X ngày)
+        $sendMilestones = [15, 7, 3, 2, 1];
+
         $lastNotification = EmailNotification::where('student_id', $student->id)
             ->where('notifiable_type', $type)
             ->where('notifiable_id', $notifiableId)
             ->whereIn('status', ['pending', 'stopped'])
+            ->orderByDesc('last_sent_at')
             ->first();
 
-        $document = $type === 'passport' ? $student->passport : $student->visa;
-        $expiry = Carbon::parse($document->expiry_date)->endOfDay();
-        $now = Carbon::now();
-
-        // dùng giây thay vì ngày
-        $secondsLeft = $now->diffInSeconds($expiry, false);
-
-        $isExpired   = $secondsLeft <= 0;
-        $isExpiring  = $secondsLeft > 0 && $secondsLeft <= 30 * 86400;
-        $isValid     = $secondsLeft > 30 * 86400;
-
-        // ========== XỬ LÝ TRẠNG THÁI 'STOPPED' BỊ BẬT LẠI ==========
-        if ($lastNotification && $lastNotification->status === 'stopped') {
-            // ✅ Kiểm tra xem có phải do gia hạn không
-            if ($lastNotification->expiry_date_at_send) {
-                $oldExpiry = Carbon::parse($lastNotification->expiry_date_at_send);
-                $newExpiry = Carbon::parse($document->expiry_date);
-
-                if (!$oldExpiry->equalTo($newExpiry)) {
-                    // ✅ CÓ GIA HẠN
-
-                    if ($isValid) {
-                        // ✅ GIA HẠN LÊN CÒN HẠN XA (> 30 ngày)
-                        $lastNotification->update([
-                            'status' => 'inactive',
-                            'next_send_at' => null,
-                            'inactive_reason' => "Renewed from {$oldExpiry->format('d/m/Y')} (expired) to {$newExpiry->format('d/m/Y')} (valid > 30 days)",
-                            'inactive_at' => Carbon::now(),
-                        ]);
-
-                        $this->info("🔄 {$student->full_name} - {$type}: Gia hạn từ HẾT HẠN → CÒN HẠN XA ({$newExpiry->format('d/m/Y')}, {$secondsLeft} giây)");
-
-                        // ✅ Không gửi email, chờ đến khi < 30 ngày
-                        return false;
-                    } elseif ($isExpiring) {
-                        // ✅ GIA HẠN LÊN SẮP HẾT HẠN (< 30 ngày)
-                        $lastNotification->update([
-                            'status' => 'inactive',
-                            'next_send_at' => null,
-                            'inactive_reason' => "Renewed from {$oldExpiry->format('d/m/Y')} (expired) to {$newExpiry->format('d/m/Y')} (expiring)",
-                            'inactive_at' => Carbon::now(),
-                        ]);
-
-                        $this->info("🔄 {$student->full_name} - {$type}: Gia hạn từ HẾT HẠN → SẮP HẾT ({$newExpiry->format('d/m/Y')})");
-
-                        // Kiểm tra đã gửi hôm nay chưa
-                        $sentToday = EmailNotification::where('student_id', $student->id)
-                            ->where('notifiable_type', $type)
-                            ->whereDate('last_sent_at', Carbon::today())
-                            ->where('id', '!=', $lastNotification->id)
-                            ->exists();
-
-                        if ($sentToday) {
-                            $this->info("⏭️  {$student->full_name} - {$type}: Đã gửi hôm nay, gia hạn sẽ gửi vào ngày mai");
-                            EmailNotification::create([
-                                'student_id' => $student->id,
-                                'notifiable_type' => $type,
-                                'notifiable_id' => $notifiableId,
-                                'expiry_date_at_send' => $document->expiry_date,
-                                'last_sent_at' => null,
-                                'next_send_at' => Carbon::tomorrow()->setTime(7, 45, 0),
-                                'send_count' => 0,
-                                'status' => 'pending',
-                            ]);
-                            return false;
-                        }
-
-                        // ✅ Cho phép gửi ngay
-                        return true;
-                    } else {
-                        // ✅ GIA HẠN NHƯNG VẪN HẾT HẠN (gia hạn ngày quá khứ - edge case)
-                        $lastNotification->update([
-                            'status' => 'inactive',
-                            'next_send_at' => null,
-                            'inactive_reason' => "Renewed from {$oldExpiry->format('d/m/Y')} to {$newExpiry->format('d/m/Y')} (still expired)",
-                            'inactive_at' => Carbon::now(),
-                        ]);
-
-                        $this->info("🔄 {$student->full_name} - {$type}: Gia hạn nhưng vẫn hết hạn ({$newExpiry->format('d/m/Y')})");
-
-                        // ✅ Cho phép gửi email "hết hạn" cho ngày mới
-                        return true;
-                    }
-                }
-            }
-
-            // ✅ Không có gia hạn - chỉ kiểm tra trạng thái hiện tại
-            if ($isExpiring) {
-                $lastNotification->update([
-                    'status' => 'pending',
-                    'next_send_at' => Carbon::tomorrow()->setTime(7, 45, 0),
-                ]);
-                $this->info("🔄 {$student->full_name} - {$type}: Bật lại do còn hạn ({$secondsLeft} giây)");
-                return false;
-            }
-
-            return false;
-            // ✅ Không có gia hạn - kiểm tra xem có phải chỉ đổi ảnh không
-            // if ($isExpiring) {
-            //     // Kiểm tra xem ngày hết hạn có thay đổi không
-            //     if ($lastNotification->expiry_date_at_send) {
-            //         $oldExpiry = Carbon::parse($lastNotification->expiry_date_at_send);
-            //         $newExpiry = Carbon::parse($document->expiry_date);
-
-            //         if ($oldExpiry->equalTo($newExpiry)) {
-            //             //
-            //             $this->info("ℹ️  {$student->full_name} - {$type}: Cập nhật (không đổi ngày), giữ nguyên");
-            //             return false;
-            //         }
-            //     }
-
-            //     // ✅ Có thay đổi ngày hết hạn → Bật lại
-            //     $lastNotification->update([
-            //         'status' => 'pending',
-            //         'next_send_at' => Carbon::tomorrow()->setTime(7, 45, 0),
-            //     ]);
-            //     $this->info("🔄 {$student->full_name} - {$type}: Bật lại do thay đổi ngày hết hạn ({$secondsLeft} giây)");
-            //     return true;
-            // }
-
-            // return false;
-        }
-
-        // ========== XỬ LÝ GIA HẠN (TỪ PENDING/EXPIRING) ==========
-        if ($lastNotification && $lastNotification->last_sent_at && $document->updated_at->gt($lastNotification->last_sent_at)) {
-            if ($lastNotification->expiry_date_at_send) {
-                $oldExpiry = Carbon::parse($lastNotification->expiry_date_at_send);
-                $newExpiry = Carbon::parse($document->expiry_date);
-
-                if (!$oldExpiry->equalTo($newExpiry)) {
-                    $lastNotification->update([
-                        'status' => 'inactive',
-                        'next_send_at' => null,
-                        'inactive_reason' => "Renewed from {$oldExpiry->format('d/m/Y')} to {$newExpiry->format('d/m/Y')}",
-                        'inactive_at' => Carbon::now(),
-                    ]);
-
-                    $this->info("🔄 {$student->full_name} gia hạn {$type} ({$oldExpiry->format('d/m/Y')} → {$newExpiry->format('d/m/Y')})");
-
-                    // ✅ Nếu gia hạn lên > 30 ngày → Không gửi email
-                    if ($isValid) {
-                        $this->info("✅ {$student->full_name} - {$type}: Gia hạn lên còn hạn xa (> 30 ngày), không gửi email");
-                        return false;
-                    }
-
-                    // ✅ Nếu vẫn sắp hết hoặc hết hạn → Gửi email
-                    $sentToday = EmailNotification::where('student_id', $student->id)
-                        ->where('notifiable_type', $type)
-                        ->whereDate('last_sent_at', Carbon::today())
-                        ->where('id', '!=', $lastNotification->id)
-                        ->exists();
-
-                    if ($sentToday) {
-                        $this->info("⏭️  {$student->full_name} - {$type}: Đã gửi hôm nay, gia hạn sẽ gửi vào ngày mai");
-                        EmailNotification::create([
-                            'student_id' => $student->id,
-                            'notifiable_type' => $type,
-                            'notifiable_id' => $notifiableId,
-                            'expiry_date_at_send' => $document->expiry_date,
-                            'last_sent_at' => null,
-                            'next_send_at' => Carbon::tomorrow()->setTime(7, 45, 0),
-                            'send_count' => 0,
-                            'status' => 'pending',
-                        ]);
-                        return false;
-                    }
-
-                    return true;
-                } else {
-                    $this->info("ℹ️  {$student->full_name} cập nhật {$type} (không đổi ngày hết hạn)");
-                }
-            } else {
-                $lastNotification->update([
-                    'status' => 'inactive',
-                    'next_send_at' => null,
-                    'inactive_reason' => 'Document updated - legacy record',
-                    'inactive_at' => Carbon::now(),
-                ]);
-                $this->info("🔄 {$student->full_name} cập nhật {$type} - Bắt đầu chu kỳ mới");
-                return true;
-            }
-        }
-
-        // ========== KIỂM TRA ĐÃ GỬI HÔM NAY CHƯA ==========
-        if ($lastNotification && $lastNotification->last_sent_at) {
-            $lastSentDate = Carbon::parse($lastNotification->last_sent_at)->startOfDay();
-            $today = Carbon::now()->startOfDay();
-
-            if ($lastSentDate->equalTo($today)) {
-                $this->info("⏭️  {$student->full_name} - {$type}: Đã gửi hôm nay, bỏ qua");
-                return false;
-            }
-        }
-
-        // ========== XỬ LÝ TÀI LIỆU ĐÃ HẾT HẠN ==========
+        // ========== ĐÃ HẾT HẠN ==========
         if ($isExpired) {
             if (!$lastNotification) {
-                $this->info("🆕 {$student->full_name} - {$type}: Hết hạn, chưa gửi email → Gửi lần đầu");
+                $this->info("🆕 {$student->full_name} - {$type}: Hết hạn, chưa gửi → Gửi lần đầu");
                 return true;
             }
 
-            if ($lastNotification->send_count > 0) {
-                // ✅ Kiểm tra xem đã gửi email "hết hạn" chưa
-                $lastExpiryDate = $lastNotification->expiry_date_at_send
-                    ? Carbon::parse($lastNotification->expiry_date_at_send)->endOfDay()
-                    : null;
+            // Đã gửi email khi hết hạn rồi → dừng hẳn
+            $lastSentAfterExpiry = Carbon::parse($lastNotification->last_sent_at)->gt($expiry);
+            if ($lastSentAfterExpiry) {
+                if ($lastNotification->status !== 'stopped') {
+                    $lastNotification->update(['status' => 'stopped', 'next_send_at' => null]);
+                }
+                $this->info("⏹️  {$student->full_name} - {$type}: Đã gửi email hết hạn → Dừng hẳn");
+                return false;
+            }
 
-                // So sánh thời điểm gửi email cuối với ngày hết hạn
-                $lastSentWhenExpired = $lastExpiryDate && Carbon::parse($lastNotification->last_sent_at)->gt($lastExpiryDate);
+            // Chưa gửi email hết hạn → gửi 1 lần cuối
+            $this->info("📧 {$student->full_name} - {$type}: Vừa hết hạn → Gửi lần cuối");
+            return true;
+        }
 
-                if ($lastSentWhenExpired) {
-                    // Đã gửi email khi tài liệu đã hết hạn rồi → Dừng hẳn
-                    if ($lastNotification->status !== 'stopped' || $lastNotification->next_send_at !== null) {
-                        $lastNotification->update([
-                            'status' => 'stopped',
-                            'next_send_at' => null
-                        ]);
-                        $this->info("⏹️  {$student->full_name} - {$type}: Đã gửi email hết hạn → Dừng hẳn");
+        // ========== CÒN HẠN NHƯNG > 15 NGÀY ==========
+        if ($daysLeft > 15) {
+            // Kiểm tra gia hạn: nếu đang có record stopped/pending mà ngày hết hạn thay đổi
+            if ($lastNotification && $lastNotification->expiry_date_at_send) {
+                $oldExpiry = Carbon::parse($lastNotification->expiry_date_at_send);
+                $newExpiry = Carbon::parse($document->expiry_date);
+                if (!$oldExpiry->equalTo($newExpiry) && $daysLeft > 15) {
+                    $lastNotification->update([
+                        'status'          => 'inactive',
+                        'next_send_at'    => null,
+                        'inactive_reason' => "Gia hạn từ {$oldExpiry->format('d/m/Y')} → {$newExpiry->format('d/m/Y')} (còn {$daysLeft} ngày)",
+                        'inactive_at'     => Carbon::now(),
+                    ]);
+                    $this->info("🔄 {$student->full_name} - {$type}: Gia hạn xa, đánh inactive");
+                }
+            }
+            $this->info("✅ {$student->full_name} - {$type}: Còn {$daysLeft} ngày, chưa đến mốc gửi");
+            return false;
+        }
+
+        // ========== TRONG VÙNG < 15 NGÀY — kiểm tra mốc ==========
+
+        // Kiểm tra gia hạn (ngày hết hạn thay đổi)
+        if ($lastNotification && $lastNotification->expiry_date_at_send) {
+            $oldExpiry = Carbon::parse($lastNotification->expiry_date_at_send);
+            $newExpiry = Carbon::parse($document->expiry_date);
+            if (!$oldExpiry->equalTo($newExpiry)) {
+                $lastNotification->update([
+                    'status'          => 'inactive',
+                    'next_send_at'    => null,
+                    'inactive_reason' => "Gia hạn từ {$oldExpiry->format('d/m/Y')} → {$newExpiry->format('d/m/Y')}",
+                    'inactive_at'     => Carbon::now(),
+                ]);
+                $this->info("�� {$student->full_name} - {$type}: Gia hạn, reset chu kỳ");
+                // Tiếp tục kiểm tra mốc mới
+                $lastNotification = null;
+            }
+        }
+
+        // Tìm mốc phù hợp với số ngày còn lại
+        $targetMilestone = null;
+        foreach ($sendMilestones as $m) {
+            if ($daysLeft <= $m) {
+                $targetMilestone = $m;
+                break;
+            }
+        }
+
+        if ($targetMilestone === null) {
+            $this->info("✅ {$student->full_name} - {$type}: Còn {$daysLeft} ngày, chưa đến mốc");
+            return false;
+        }
+
+        // Kiểm tra đã gửi ở mốc này chưa
+        if ($lastNotification && $lastNotification->last_sent_at) {
+            $lastDaysLeft = $lastNotification->send_count > 0
+                ? (int) Carbon::parse($lastNotification->last_sent_at)->diffInDays($expiry, false)
+                : null;
+
+            // Tìm mốc của lần gửi cuối
+            $lastMilestone = null;
+            if ($lastDaysLeft !== null) {
+                foreach ($sendMilestones as $m) {
+                    if ($lastDaysLeft <= $m) {
+                        $lastMilestone = $m;
+                        break;
                     }
-                    return false;
-                } else {
-                    // Chưa gửi email "hết hạn" → Cho phép gửi lần cuối
-                    $this->info("📧 {$student->full_name} - {$type}: Vừa hết hạn → Gửi email lần cuối");
-                    return true;
                 }
             }
 
-            return true;
-        }
-
-        // ========== XỬ LÝ TÀI LIỆU SẮP HẾT HẠN ==========
-        if (!$lastNotification) {
-            $this->info("🆕 {$student->full_name} - {$type}: Sắp hết hạn, chưa có record → Gửi lần đầu");
-            return true;
-        }
-
-        if ($lastNotification->next_send_at) {
-            $nextSendAt = Carbon::parse($lastNotification->next_send_at);
-            $canSend = Carbon::now()->gte($nextSendAt);
-
-            if (!$canSend) {
-                $this->info("⏳ {$student->full_name} - {$type}: Chưa đến giờ gửi (next: {$nextSendAt->format('d/m/Y H:i')})");
+            if ($lastMilestone === $targetMilestone) {
+                $this->info("⏭️  {$student->full_name} - {$type}: Đã gửi mốc {$targetMilestone} ngày, bỏ qua");
+                return false;
             }
-
-            return $canSend;
         }
 
-        return false;
+        $this->info("📬 {$student->full_name} - {$type}: Còn {$daysLeft} ngày → Gửi mốc {$targetMilestone} ngày");
+        return true;
     }
 
     protected function logNotification($student, $type, $notifiableId, $isExpired)
@@ -669,7 +533,7 @@ class SendExpiryNotifications extends Command
 //             'visa_count' => $visaCount,
 //             'total_count' => $totalCount,
 //             'details' => $this->sentDetails,
-//             'duration_seconds' => $duration,
+//             'duration_seconds' => (int) $duration,
 //             'run_at' => $runAt,
 //         ]);
 

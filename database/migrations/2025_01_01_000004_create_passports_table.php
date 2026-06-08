@@ -6,28 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('visas', function (Blueprint $table) {
+        Schema::create('passports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->string('visa_type');          // loại visa
-            $table->string('visa_number')->nullable();
+            $table->string('passport_number')->unique();
+            $table->string('country_of_issue', 100)->nullable()->comment('Quốc gia cấp hộ chiếu');
             $table->date('issue_date')->nullable();
             $table->date('expiry_date');
-            $table->string('image')->nullable();  // ảnh visa
+            $table->string('place_of_issue')->nullable();
+            $table->string('image')->nullable();
+            $table->enum('last_updated_by', ['student', 'admin'])->default('admin');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('visas');
+        Schema::dropIfExists('passports');
     }
 };

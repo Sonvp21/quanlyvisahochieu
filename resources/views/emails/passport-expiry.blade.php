@@ -3,196 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông báo hộ chiếu sắp hết hạn</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .email-container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-        .alert-box {
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid;
-        }
-        .alert-warning {
-            background-color: #fef3c7;
-            border-color: #f59e0b;
-            color: #92400e;
-        }
-        .alert-danger {
-            background-color: #fee2e2;
-            border-color: #ef4444;
-            color: #991b1b;
-        }
-        .info-table {
-            width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
-        }
-        .info-table td {
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .info-table td:first-child {
-            font-weight: 600;
-            color: #6b7280;
-            width: 40%;
-        }
-        .info-table td:last-child {
-            color: #1f2937;
-            font-weight: 500;
-        }
-        .days-remaining {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            line-height: 1.4;
-        }
-        .days-remaining.warning {
-            color: #f59e0b;
-        }
-        .days-remaining.danger {
-            color: #ef4444;
-        }
-        .button {
-            display: inline-block;
-            padding: 14px 28px;
-            background-color: #3b82f6;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .button:hover {
-            background-color: #2563eb;
-        }
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            text-align: center;
-            color: #6b7280;
-            font-size: 14px;
-        }
-        .instructions {
-            background-color: #f3f4f6;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .instructions h3 {
-            color: #1f2937;
-            margin-top: 0;
-        }
-        .instructions ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        .instructions li {
-            margin: 8px 0;
-            color: #4b5563;
-        }
-    </style>
+    <title>Thông báo Hộ chiếu</title>
 </head>
-<body>
-    <div class="email-container">
-        <div class="header">
-            <div class="icon">📘</div>
-            <div class="title">Thông báo về Hộ chiếu</div>
-        </div>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Segoe UI',Arial,sans-serif;color:#334155;">
 
-        @if($isExpired)
-            <div class="alert-box alert-danger">
-                <strong>⚠️ CẢNH BÁO:</strong> Hộ chiếu của bạn đã hết hạn!
-            </div>
-            <div class="days-remaining danger">
-                Đã hết hạn {{ $daysRemaining }} ngày {{ $hoursRemaining }} giờ {{ $minutesRemaining }} phút {{ $secondsRemaining }} giây
-            </div>
-        @else
-            <div class="alert-box alert-warning">
-                <strong>⏰ NHẮC NHỞ:</strong> Hộ chiếu của bạn sắp hết hạn!
-            </div>
-            <div class="days-remaining warning">
-                Còn {{ $daysRemaining }} ngày {{ $hoursRemaining }} giờ {{ $minutesRemaining }} phút {{ $secondsRemaining }} giây
-            </div>
-        @endif
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 16px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
-        <p>Xin chào <strong>{{ $student->full_name }}</strong>,</p>
-
-        <p>Đây là thông báo tự động từ hệ thống quản lý hồ sơ du học sinh.
-        Hộ chiếu của bạn {{ $isExpired ? 'đã hết hạn' : 'sắp hết hạn' }}.</p>
-
-        <table class="info-table">
-            <tr>
-                <td>Họ tên</td>
-                <td>{{ $student->full_name }}</td>
-            </tr>
-            <tr>
-                <td>Mã sinh viên</td>
-                <td>{{ $student->student_code }}</td>
-            </tr>
-            <tr>
-                <td>Số hộ chiếu</td>
-                <td>{{ $student->passport->passport_number }}</td>
-            </tr>
-            <tr>
-                <td>Ngày hết hạn</td>
-                <td><strong style="color: {{ $isExpired ? '#ef4444' : '#f59e0b' }}">{{ $expiryDate }}</strong></td>
-            </tr>
-        </table>
-
-        <div class="instructions">
-            <h3>📋 Vui lòng thực hiện:</h3>
-            <ul>
-                <li>Liên hệ cơ quan cấp hộ chiếu để gia hạn hoặc làm mới</li>
-                <li>Chuẩn bị đầy đủ giấy tờ cần thiết</li>
-                <li>Cập nhật thông tin hộ chiếu mới vào hệ thống sau khi hoàn tất</li>
-                <li>Lưu ý: Quá trình làm hộ chiếu có thể mất 7-15 ngày làm việc</li>
-            </ul>
-        </div>
-
-        <center>
-            <a href="{{ config('app.url') }}/student/profile" class="button">
-                Cập nhật hộ chiếu ngay
-            </a>
-        </center>
-
-        <div class="footer">
-            <p><strong>Lưu ý:</strong> Đây là email tự động. Bạn sẽ nhận được email nhắc nhở mỗi 7 ngày cho đến khi cập nhật thông tin mới.</p>
-            <p>Nếu bạn đã cập nhật hộ chiếu, vui lòng bỏ qua email này.</p>
-            <p style="margin-top: 20px; color: #9ca3af;">
-                © {{ date('Y') }} Hệ thống quản lý du học sinh
+    {{-- HEADER --}}
+    <tr>
+        <td style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:16px 16px 0 0;padding:32px;text-align:center;">
+            <div style="display:inline-block;width:56px;height:56px;background:rgba(255,255,255,0.15);border-radius:16px;line-height:56px;font-size:28px;margin-bottom:16px;">📘</div>
+            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">
+                @if($isExpired) Hộ chiếu đã hết hạn @else Hộ chiếu sắp hết hạn @endif
+            </h1>
+            <p style="margin:8px 0 0;color:rgba(255,255,255,0.75);font-size:14px;">
+                Hệ thống Quản lý Du học sinh · GIRC
             </p>
-        </div>
-    </div>
+        </td>
+    </tr>
+
+    {{-- BODY --}}
+    <tr>
+        <td style="background:#ffffff;padding:32px;">
+
+            {{-- COUNTDOWN BOX --}}
+            <div style="background:{{ $isExpired ? '#fef2f2' : '#fffbeb' }};border:1px solid {{ $isExpired ? '#fecaca' : '#fde68a' }};border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
+                <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:{{ $isExpired ? '#dc2626' : '#d97706' }};text-transform:uppercase;letter-spacing:0.05em;">
+                    @if($isExpired) Đã hết hạn @else Còn lại @endif
+                </p>
+                <p style="margin:0;font-size:28px;font-weight:800;color:{{ $isExpired ? '#dc2626' : '#d97706' }};">
+                    {{ $daysRemaining }} ngày {{ $hoursRemaining }} giờ {{ $minutesRemaining }} phút
+                </p>
+            </div>
+
+            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
+                Xin chào <strong>{{ $student->full_name }}</strong>,
+            </p>
+            <p style="margin:0 0 24px;font-size:14px;line-height:1.7;color:#64748b;">
+                Đây là thông báo tự động từ Hệ thống Quản lý Du học sinh.
+                Hộ chiếu của bạn <strong>{{ $isExpired ? 'đã hết hạn' : 'sắp hết hạn' }}</strong>.
+                Vui lòng thực hiện các bước cần thiết để gia hạn kịp thời.
+            </p>
+
+            {{-- INFO TABLE --}}
+            <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:24px;">
+                <tr style="background:#f8fafc;">
+                    <td colspan="2" style="padding:12px 16px;font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #e2e8f0;">
+                        Thông tin Hộ chiếu
+                    </td>
+                </tr>
+                @php
+                    $rows = [
+                        ['Họ và tên', $student->full_name],
+                        ['Mã sinh viên', $student->student_code],
+                        ['Số hộ chiếu', $student->passport->passport_number],
+                        ['Quốc gia cấp', $student->passport->country_of_issue ?? '—'],
+                        ['Nơi cấp', $student->passport->place_of_issue ?? '—'],
+                    ];
+                @endphp
+                @foreach($rows as $i => [$label, $value])
+                <tr style="{{ $i % 2 === 0 ? 'background:#ffffff' : 'background:#f8fafc' }}">
+                    <td style="padding:12px 16px;font-size:13px;color:#64748b;width:45%;border-bottom:1px solid #f1f5f9;">{{ $label }}</td>
+                    <td style="padding:12px 16px;font-size:13px;font-weight:600;color:#1e293b;border-bottom:1px solid #f1f5f9;">{{ $value }}</td>
+                </tr>
+                @endforeach
+                <tr style="background:{{ $isExpired ? '#fef2f2' : '#fffbeb' }}">
+                    <td style="padding:12px 16px;font-size:13px;color:#64748b;">Ngày hết hạn</td>
+                    <td style="padding:12px 16px;font-size:13px;font-weight:700;color:{{ $isExpired ? '#dc2626' : '#d97706' }};">{{ $expiryDate }}</td>
+                </tr>
+            </table>
+
+            @if($isExpired)
+            <div style="background:#fef2f2;border-left:4px solid #dc2626;border-radius:0 8px 8px 0;padding:16px;margin-bottom:24px;">
+                <p style="margin:0;font-size:13px;font-weight:700;color:#dc2626;margin-bottom:4px;">🚨 Quan trọng</p>
+                <p style="margin:0;font-size:13px;color:#b91c1c;line-height:1.6;">
+                    Hộ chiếu hết hạn có thể ảnh hưởng đến tình trạng visa và lưu trú của bạn.
+                    Liên hệ ngay phòng Quan hệ Quốc tế để được hỗ trợ.
+                </p>
+            </div>
+            @endif
+
+            <div style="background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:24px;">
+                <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#334155;">📋 Các bước cần thực hiện:</p>
+                <ol style="margin:0;padding-left:20px;">
+                    @php
+                        $steps = [
+                            'Liên hệ Đại sứ quán hoặc Lãnh sự quán nước bạn tại Việt Nam',
+                            'Chuẩn bị hồ sơ làm mới hộ chiếu theo quy định',
+                            'Thông báo cho phòng Quan hệ Quốc tế của trường',
+                            'Cập nhật thông tin hộ chiếu mới vào hệ thống sau khi hoàn tất',
+                        ];
+                        if ($isExpired) $steps[] = 'Kiểm tra tình trạng visa — hộ chiếu hết hạn có thể ảnh hưởng đến visa';
+                        else $steps[] = 'Lưu ý: Quá trình làm mới hộ chiếu có thể mất 4–8 tuần';
+                    @endphp
+                    @foreach($steps as $step)
+                    <li style="font-size:13px;color:#475569;line-height:1.7;margin-bottom:4px;">{{ $step }}</li>
+                    @endforeach
+                </ol>
+            </div>
+
+            <div style="text-align:center;margin-bottom:24px;">
+                <a href="{{ config('app.url') }}/student/profile"
+                    style="display:inline-block;background:#1d4ed8;color:#ffffff;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.02em;">
+                    Cập nhật Hộ chiếu ngay →
+                </a>
+            </div>
+
+            <div style="border-top:1px solid #f1f5f9;padding-top:20px;">
+                <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.7;text-align:center;">
+                    Email này được gửi tự động. Bạn sẽ nhận thông báo mỗi ngày cho đến khi cập nhật thông tin mới.<br>
+                    Nếu đã gia hạn, vui lòng cập nhật vào hệ thống để dừng nhận thông báo.
+                </p>
+            </div>
+
+        </td>
+    </tr>
+
+    {{-- FOOTER --}}
+    <tr>
+        <td style="background:#f8fafc;border-radius:0 0 16px 16px;padding:20px;text-align:center;border-top:1px solid #e2e8f0;">
+            <p style="margin:0;font-size:12px;color:#94a3b8;">
+                © {{ date('Y') }} GIRC System · Hệ thống Quản lý Visa & Hộ chiếu<br>
+                Trường Đại học Nông Lâm, Quyết Thắng, Thái Nguyên
+            </p>
+        </td>
+    </tr>
+
+</table>
+</td></tr>
+</table>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="p-6 max-w-3xl mx-auto space-y-5">
+<div class="p-6 mx-auto space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between">

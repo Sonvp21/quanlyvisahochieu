@@ -13,7 +13,8 @@ use App\Http\Controllers\Admin\StudentController as AdminStudent;
 use App\Http\Controllers\Admin\PassportController as AdminPassport;
 use App\Http\Controllers\Admin\VisaController as AdminVisa;
 use App\Http\Controllers\Admin\NotificationReportController;
-
+use App\Http\Controllers\Admin\ResidenceController;
+use App\Http\Controllers\Admin\StudentExportController;
 // STUDENT
 use App\Http\Controllers\Student\ProfilesController;
 use App\Http\Controllers\Student\PassportController as StudentPassport;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 | HOME
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -60,6 +62,11 @@ Route::middleware(['auth', 'role:admin'])
         // Dashboard
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
+        // Xuất Excel danh sách sinh viên (đặt trước resource để không bị {student} nuốt mất)
+        Route::get('/students/export', [StudentExportController::class, 'export'])->name('students.export');
+
+        // Cập nhật thông tin tạm trú cho 1 sinh viên
+        Route::put('/students/{student}/residence', [ResidenceController::class, 'update'])->name('students.residence.update');
         // Sinh viên
         Route::resource('students', AdminStudent::class);
 

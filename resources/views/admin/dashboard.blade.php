@@ -193,7 +193,7 @@
     {{-- QUICK ACTIONS --}}
     <div class="bg-white rounded-2xl border border-slate-200 p-5">
         <div class="text-sm font-semibold text-slate-800 mb-4">Thao tác nhanh</div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <a href="{{ route('admin.students.index') }}"
                 class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 transition-all group">
                 <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-600 rounded-xl flex items-center justify-center transition-colors">
@@ -203,7 +203,7 @@
                 </div>
                 <span class="text-xs font-medium text-slate-600 group-hover:text-blue-700 transition-colors text-center">Danh sách sinh viên</span>
             </a>
-
+ 
             <a href="{{ route('admin.students.create') }}"
                 class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 border border-slate-200 transition-all group">
                 <div class="w-10 h-10 bg-emerald-100 group-hover:bg-emerald-600 rounded-xl flex items-center justify-center transition-colors">
@@ -213,7 +213,7 @@
                 </div>
                 <span class="text-xs font-medium text-slate-600 group-hover:text-emerald-700 transition-colors text-center">Thêm sinh viên</span>
             </a>
-
+ 
             <a href="{{ route('admin.students.index', ['filter' => 'passport_expiring']) }}"
                 class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 transition-all group">
                 <div class="w-10 h-10 bg-amber-100 group-hover:bg-amber-500 rounded-xl flex items-center justify-center transition-colors">
@@ -223,7 +223,7 @@
                 </div>
                 <span class="text-xs font-medium text-slate-600 group-hover:text-amber-700 transition-colors text-center">Sắp hết hạn</span>
             </a>
-
+ 
             <a href="{{ route('admin.notification-reports.index') }}"
                 class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-violet-50 hover:border-violet-200 border border-slate-200 transition-all group">
                 <div class="w-10 h-10 bg-violet-100 group-hover:bg-violet-600 rounded-xl flex items-center justify-center transition-colors">
@@ -232,6 +232,16 @@
                     </svg>
                 </div>
                 <span class="text-xs font-medium text-slate-600 group-hover:text-violet-700 transition-colors text-center">Báo cáo email</span>
+            </a>
+ 
+            <a href="{{ route('admin.students.export') }}"
+                class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-teal-50 hover:border-teal-200 border border-slate-200 transition-all group">
+                <div class="w-10 h-10 bg-teal-100 group-hover:bg-teal-600 rounded-xl flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-teal-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-slate-600 group-hover:text-teal-700 transition-colors text-center">Xuất Excel</span>
             </a>
         </div>
     </div>

@@ -38,6 +38,11 @@ class Student extends Model
         return $this->hasOne(Visa::class);
     }
 
+    public function residence()
+    {
+        return $this->hasOne(Residence::class);
+    }
+
     // ==================== PASSPORT HELPERS ====================
 
     /**

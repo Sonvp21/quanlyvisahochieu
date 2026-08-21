@@ -45,7 +45,7 @@
             <div class="absolute top-1/3 left-1/3 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-3xl"></div>
         </div>
 
-        <div class="relative max-w-3xl mx-auto space-y-6">
+        <div class="relative mx-auto space-y-6">
             {{-- Badge --}}
             <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-semibold">
                 <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></span>

@@ -8,6 +8,10 @@
                 <p class="text-sm text-slate-500">{{ $delegation->host_unit }}</p>
             </div>
             <div class="flex gap-2">
+                <a href="{{ route('admin.delegations.export-word', $delegation) }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 shadow-sm">
+                    Xuất công văn Word
+                </a>
                 <a href="{{ route('admin.delegations.export', $delegation) }}"
                    class="px-4 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm">
                     Xuất Excel phụ lục

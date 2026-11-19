@@ -23,6 +23,7 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 
 use App\Http\Controllers\Admin\DelegationController;
 use App\Http\Controllers\Admin\DelegationExportController;
+use App\Http\Controllers\Admin\DelegationWordExportController;
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -90,6 +91,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('delegations', DelegationController::class);
         Route::get('delegations/{delegation}/export', [DelegationExportController::class, 'export'])
             ->name('delegations.export');
+        Route::get('delegations/{delegation}/export-word', [DelegationWordExportController::class, 'export'])
+            ->name('delegations.export-word');
     });
 
 /*

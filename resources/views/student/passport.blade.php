@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="p-6 max-w-2xl mx-auto space-y-5">
+<div class="max-w-2xl mx-auto space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center gap-3">
@@ -26,7 +26,7 @@
 
     {{-- CURRENT PASSPORT INFO --}}
     @if($passport)
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -86,7 +86,7 @@
         </div>
     </div>
     @else
-    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
         <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -100,7 +100,7 @@
     {{-- UPDATE FORM --}}
     <form method="POST" action="{{ route('student.profile.passport.update') }}" enctype="multipart/form-data">
         @csrf @method('PUT')
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
                 <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                     <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,7 +145,7 @@
             </div>
             <div class="px-5 pb-5 flex justify-end">
                 <button type="submit"
-                    class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
+                    class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors shadow-sm">
                     {{ $passport ? 'Cập nhật hộ chiếu' : 'Thêm hộ chiếu' }}
                 </button>
             </div>

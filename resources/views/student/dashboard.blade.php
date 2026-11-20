@@ -1,17 +1,17 @@
 <x-app-layout>
-<div class="p-6 mx-auto space-y-5">
+<div class="space-y-5">
 
     {{-- WELCOME --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Xin chào, {{ $student->full_name }}!</h1>
+            <h1 class="text-xl font-semibold text-slate-900">Xin chào, {{ $student->full_name }}!</h1>
             <p class="text-sm text-slate-500 mt-0.5">
                 Mã sinh viên: <span class="font-semibold text-blue-600">{{ $student->student_code }}</span>
                 &middot; {{ now()->locale('vi')->isoFormat('dddd, D/M/YYYY') }}
             </p>
         </div>
         <a href="{{ route('student.profile.show') }}"
-            class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+            class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
@@ -42,7 +42,7 @@
             $pIcon = match($pColor){ 'green'=>'text-emerald-600 bg-emerald-100','yellow'=>'text-amber-600 bg-amber-100','red'=>'text-red-600 bg-red-100',default=>'text-slate-500 bg-slate-100' };
             $pBadge = match($pColor){ 'green'=>'bg-emerald-100 text-emerald-700','yellow'=>'bg-amber-100 text-amber-700','red'=>'bg-red-100 text-red-700',default=>'bg-slate-100 text-slate-500' };
         @endphp
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-10 h-10 rounded-xl {{ $pIcon }} flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@
             $vIcon = match($vColor){ 'green'=>'text-emerald-600 bg-emerald-100','yellow'=>'text-amber-600 bg-amber-100','red'=>'text-red-600 bg-red-100',default=>'text-slate-500 bg-slate-100' };
             $vBadge = match($vColor){ 'green'=>'bg-emerald-100 text-emerald-700','yellow'=>'bg-amber-100 text-amber-700','red'=>'bg-red-100 text-red-700',default=>'bg-slate-100 text-slate-500' };
         @endphp
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-10 h-10 rounded-xl {{ $vIcon }} flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,14 +90,14 @@
         </div>
 
         {{-- Email --}}
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
             <div class="flex items-center justify-between mb-4">
-                <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">Email</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">Email</span>
             </div>
             <div class="text-sm font-bold text-slate-800 mb-1">Tài khoản</div>
             <div class="text-xs text-slate-500 truncate">{{ auth()->user()->email }}</div>
@@ -108,7 +108,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {{-- Hộ chiếu countdown --}}
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
                 <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                     <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,9 +147,9 @@
         </div>
 
         {{-- Visa countdown --}}
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
-                <div class="w-7 h-7 bg-violet-600 rounded-lg flex items-center justify-center">
+                <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                     <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
@@ -190,7 +190,7 @@
     {{-- CTA mobile --}}
     <div class="sm:hidden">
         <a href="{{ route('student.profile.show') }}"
-            class="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors">
+            class="flex items-center justify-center gap-2 w-full py-3 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>

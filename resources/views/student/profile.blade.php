@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="p-6 mx-auto space-y-5">
+<div class="space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between">
@@ -33,7 +33,7 @@
     {{-- THÔNG TIN SINH VIÊN --}}
     <form method="POST" action="{{ route('student.profile.student.update') }}">
         @csrf @method('PUT')
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
                 <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                     <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors shadow-sm">
                         Lưu thông tin
                     </button>
                 </div>
@@ -89,7 +89,7 @@
     {{-- HỘ CHIẾU --}}
     <form method="POST" action="{{ route('student.profile.passport.update') }}" enctype="multipart/form-data">
         @csrf @method('PUT')
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -144,7 +144,7 @@
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors shadow-sm">
                         Cập nhật hộ chiếu
                     </button>
                 </div>
@@ -155,10 +155,10 @@
     {{-- VISA --}}
     <form method="POST" action="{{ route('student.profile.visa.update') }}" enctype="multipart/form-data">
         @csrf @method('PUT')
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 bg-violet-600 rounded-lg flex items-center justify-center">
+                    <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
@@ -211,12 +211,12 @@
                             <img src="{{ asset('storage/'.$student->visa->image) }}" class="w-24 h-16 object-cover rounded-lg mb-2 border border-slate-200 cursor-pointer" onclick="openModal(this.src)">
                         @endif
                         <input type="file" name="image" accept="image/*"
-                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-violet-50 file:text-violet-600 hover:file:bg-violet-100"/>
+                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"/>
                     </div>
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="px-5 py-2.5 text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 rounded-xl transition-colors shadow-sm">
+                        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors shadow-sm">
                         Cập nhật visa
                     </button>
                 </div>

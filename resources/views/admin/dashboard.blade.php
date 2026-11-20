@@ -1,10 +1,10 @@
 <x-app-layout>
-<div class="p-6 max-w-7xl mx-auto space-y-6">
+<div class="space-y-6">
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Tổng quan hệ thống</h1>
+            <h1 class="text-xl font-semibold text-slate-900">Tổng quan hệ thống</h1>
             <p class="text-sm text-slate-500 mt-0.5">Cập nhật lúc {{ now()->format('H:i, d/m/Y') }}</p>
         </div>
         <span class="hidden sm:flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
@@ -30,8 +30,8 @@
 
         <div class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-3">
-                <div class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                 </div>
@@ -72,7 +72,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {{-- PASSPORT --}}
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -131,10 +131,10 @@
         </div>
 
         {{-- VISA --}}
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
@@ -145,7 +145,7 @@
                     </div>
                 </div>
                 <a href="{{ route('admin.students.index', ['filter' => 'visa_expired']) }}"
-                    class="text-xs text-violet-600 hover:underline font-medium">Xem tất cả</a>
+                    class="text-xs text-blue-600 hover:underline font-medium">Xem tất cả</a>
             </div>
             <div class="p-5 space-y-3">
                 @php
@@ -191,7 +191,7 @@
     </div>
 
     {{-- QUICK ACTIONS --}}
-    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
         <div class="text-sm font-semibold text-slate-800 mb-4">Thao tác nhanh</div>
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <a href="{{ route('admin.students.index') }}"
@@ -225,13 +225,13 @@
             </a>
  
             <a href="{{ route('admin.notification-reports.index') }}"
-                class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-violet-50 hover:border-violet-200 border border-slate-200 transition-all group">
-                <div class="w-10 h-10 bg-violet-100 group-hover:bg-violet-600 rounded-xl flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-violet-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 hover:bg-blue-50 hover:border-blue-200 border border-slate-200 transition-all group">
+                <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-600 rounded-xl flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <span class="text-xs font-medium text-slate-600 group-hover:text-violet-700 transition-colors text-center">Báo cáo email</span>
+                <span class="text-xs font-medium text-slate-600 group-hover:text-blue-700 transition-colors text-center">Báo cáo email</span>
             </a>
  
             <a href="{{ route('admin.students.export') }}"

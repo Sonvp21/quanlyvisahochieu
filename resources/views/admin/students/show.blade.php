@@ -1,7 +1,7 @@
 <x-app-layout>
 
 <x-alert-success />
-    <div class="p-6 mx-auto space-y-5">
+    <div class="space-y-5">
 
         {{-- HEADER --}}
         <div class="flex items-center justify-between">
@@ -19,7 +19,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.students.edit', $student) }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                    class="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
@@ -40,7 +40,7 @@
         </div>
 
         {{-- THÔNG TIN SINH VIÊN --}}
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +52,7 @@
 
             <div class="p-5">
                 <div class="flex items-center gap-4 mb-5">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
                         {{ strtoupper(substr($student->full_name, 0, 1)) }}
                     </div>
                     <div>
@@ -99,7 +99,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
             {{-- HỘ CHIẾU --}}
-            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -173,10 +173,10 @@
             </div>
 
             {{-- VISA --}}
-            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
@@ -248,7 +248,7 @@
             </div>
 
             {{-- TẠM TRÚ --}}
-            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">

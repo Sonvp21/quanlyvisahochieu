@@ -1,10 +1,10 @@
 <x-app-layout>
-<div class="p-6 max-w-7xl mx-auto space-y-5">
+<div class="space-y-5">
 
     {{-- HEADER --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Danh sách sinh viên</h1>
+            <h1 class="text-xl font-semibold text-slate-900">Danh sách sinh viên</h1>
             <p class="text-sm text-slate-500 mt-0.5">Quản lý thông tin sinh viên, hộ chiếu và visa</p>
         </div>
         <div class="flex items-center gap-2">
@@ -16,7 +16,7 @@
                 <span class="hidden sm:inline">Xuất Excel</span>
             </a>
             <a href="{{ route('admin.students.create') }}"
-                class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -28,7 +28,7 @@
     <x-alert-success />
 
     {{-- FILTER BAR --}}
-    <div class="bg-white rounded-2xl border border-slate-200 p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <form method="GET" action="{{ route('admin.students.index') }}">
             <div class="flex flex-wrap gap-3">
                 {{-- Search --}}
@@ -62,7 +62,7 @@
                 </select>
 
                 <button type="submit"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                    class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors">
                     Tìm kiếm
                 </button>
 
@@ -83,7 +83,7 @@
     </div>
 
     {{-- TABLE --}}
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -109,7 +109,7 @@
                         {{-- SINH VIÊN --}}
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                                <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                     {{ strtoupper(substr($student->full_name, 0, 1)) }}
                                 </div>
                                 <div class="min-w-0">

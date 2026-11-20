@@ -1,13 +1,13 @@
 <x-app-layout>
-<div class="p-6 max-w-2xl mx-auto space-y-5">
+<div class="max-w-2xl mx-auto space-y-5">
 
     <div>
-        <h1 class="text-2xl font-bold text-slate-800">Hồ sơ cá nhân</h1>
+        <h1 class="text-xl font-semibold text-slate-900">Hồ sơ cá nhân</h1>
         <p class="text-sm text-slate-500 mt-0.5">Cập nhật thông tin tài khoản của bạn</p>
     </div>
 
     {{-- UPDATE PROFILE --}}
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
             <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +22,7 @@
     </div>
 
     {{-- UPDATE PASSWORD --}}
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
             <div class="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center">
                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

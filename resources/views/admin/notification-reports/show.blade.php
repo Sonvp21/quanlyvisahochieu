@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="p-6 max-w-4xl mx-auto space-y-5">
+<div class="max-w-4xl mx-auto space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center gap-3">
@@ -20,17 +20,17 @@
 
     {{-- SUMMARY --}}
     <div class="grid grid-cols-3 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 text-center">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 text-center">
             <div class="text-xs text-slate-400 mb-1">Hộ chiếu</div>
             <div class="text-3xl font-bold text-blue-700">{{ $report->passport_count }}</div>
             <div class="text-xs text-slate-500 mt-1">email đã gửi</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 text-center">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 text-center">
             <div class="text-xs text-slate-400 mb-1">Visa</div>
-            <div class="text-3xl font-bold text-violet-700">{{ $report->visa_count }}</div>
+            <div class="text-3xl font-bold text-blue-700">{{ $report->visa_count }}</div>
             <div class="text-xs text-slate-500 mt-1">email đã gửi</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 text-center">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 text-center">
             <div class="text-xs text-slate-400 mb-1">Tổng cộng</div>
             <div class="text-3xl font-bold {{ $report->total_count > 0 ? 'text-emerald-700' : 'text-slate-400' }}">
                 {{ $report->total_count }}
@@ -45,7 +45,7 @@
     @endphp
 
     @if($details && count($details) > 0)
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
             <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                 <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +84,7 @@
                                     Hộ chiếu
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-violet-100 text-violet-700 border border-violet-200">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
                                     Visa
                                 </span>
                             @endif
@@ -111,7 +111,7 @@
     </div>
 
     @else
-    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
         <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>

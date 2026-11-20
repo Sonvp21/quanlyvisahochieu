@@ -1,10 +1,10 @@
 <x-app-layout>
-<div class="p-6 max-w-7xl mx-auto space-y-5">
+<div class="space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Báo cáo Email</h1>
+            <h1 class="text-xl font-semibold text-slate-900">Báo cáo Email</h1>
             <p class="text-sm text-slate-500 mt-0.5">Lịch sử gửi thông báo hộ chiếu và visa</p>
         </div>
         <div class="flex items-center gap-2">
@@ -46,27 +46,27 @@
         $avgDuration = round($reports->avg('duration_seconds'), 1);
     @endphp
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
             <div class="text-xs text-slate-400 mb-1">Tổng email đã gửi</div>
-            <div class="text-2xl font-bold text-slate-800">{{ $totalSent }}</div>
+            <div class="text-xl font-semibold text-slate-900">{{ $totalSent }}</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
             <div class="text-xs text-slate-400 mb-1">Email hộ chiếu</div>
             <div class="text-2xl font-bold text-blue-700">{{ $totalPassport }}</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
             <div class="text-xs text-slate-400 mb-1">Email visa</div>
-            <div class="text-2xl font-bold text-violet-700">{{ $totalVisa }}</div>
+            <div class="text-2xl font-bold text-blue-700">{{ $totalVisa }}</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
             <div class="text-xs text-slate-400 mb-1">Thời gian TB/lần</div>
-            <div class="text-2xl font-bold text-slate-800">{{ $avgDuration }}s</div>
+            <div class="text-xl font-semibold text-slate-900">{{ $avgDuration }}s</div>
         </div>
     </div>
     @endif
 
     {{-- TABLE --}}
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -96,7 +96,7 @@
                         </td>
                         <td class="px-4 py-3 text-center">
                             <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold
-                                {{ $report->visa_count > 0 ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-400' }}">
+                                {{ $report->visa_count > 0 ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-400' }}">
                                 {{ $report->visa_count }}
                             </span>
                         </td>

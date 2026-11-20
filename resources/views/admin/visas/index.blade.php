@@ -1,10 +1,10 @@
 <x-app-layout>
-<div class="p-6 max-w-7xl mx-auto space-y-5">
+<div class="space-y-5">
 
     {{-- HEADER --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Danh sách Visa</h1>
+            <h1 class="text-xl font-semibold text-slate-900">Danh sách Visa</h1>
             <p class="text-sm text-slate-500 mt-0.5">Quản lý visa của tất cả sinh viên</p>
         </div>
     </div>
@@ -12,7 +12,7 @@
     <x-alert-success />
 
     {{-- FILTER --}}
-    <div class="bg-white rounded-2xl border border-slate-200 p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <form method="GET" action="{{ route('admin.visas.index') }}">
             <div class="flex flex-wrap gap-3">
                 <div class="flex-1 min-w-[220px] relative">
@@ -37,7 +37,7 @@
                     <option value="multiple" {{ request('entry_type')=='multiple'?'selected':'' }}>Nhiều lần</option>
                 </select>
                 <button type="submit"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+                    class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors">
                     Tìm kiếm
                 </button>
                 @if(request('search') || request('status') || request('entry_type'))
@@ -51,7 +51,7 @@
     </div>
 
     {{-- TABLE --}}
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -87,7 +87,7 @@
                             @if($student)
                             <a href="{{ route('admin.students.show', $student) }}"
                                 class="flex items-center gap-2.5 group">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                                     {{ strtoupper(substr($student->full_name, 0, 1)) }}
                                 </div>
                                 <div>

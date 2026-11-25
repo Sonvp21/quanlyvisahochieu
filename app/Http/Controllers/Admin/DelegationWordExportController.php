@@ -96,12 +96,17 @@ class DelegationWordExportController extends Controller
 
         $timeRange = '......';
         if ($delegation->work_date_from) {
-            $timeRange = $delegation->work_date_from->format('d/m/Y');
-            if ($delegation->work_date_to && !$delegation->work_date_to->eq($delegation->work_date_from)) {
-                $timeRange .= ' - ' . $delegation->work_date_to->format('d/m/Y');
+            $from = $delegation->work_date_from;
+            $to = $delegation->work_date_to;
+            if (!$to || $to->eq($from)) {
+                $timeRange = $from->format('H:i') . ' ngày ' . $from->format('d/m/Y');
+            } elseif ($to->isSameDay($from)) {
+                $timeRange = 'từ ' . $from->format('H:i') . ' đến ' . $to->format('H:i') . ' ngày ' . $from->format('d/m/Y');
+            } else {
+                $timeRange = 'từ ' . $from->format('H:i') . ' ngày ' . $from->format('d/m/Y') . ' đến ' . $to->format('H:i') . ' ngày ' . $to->format('d/m/Y');
             }
         }
-        $section->addText("2. Thời gian: Ngày {$timeRange}.");
+        $section->addText("2. Thời gian: {$timeRange}.");
         $section->addText('3. Nội dung: ' . ($delegation->purpose ?: '......') . '.');
         $section->addText('4. Địa điểm công tác: ' . ($delegation->work_location ?: ($delegation->host_unit ?: '......')) . '.');
 

@@ -22,6 +22,8 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 
 
 use App\Http\Controllers\Admin\DelegationController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Admin\DelegationExportController;
 use App\Http\Controllers\Admin\DelegationWordExportController;
 /*
@@ -87,6 +89,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/notification-reports',                [NotificationReportController::class, 'index'])->name('notification-reports.index');
         Route::get('/notification-reports/{id}',           [NotificationReportController::class, 'show'])->name('notification-reports.show');
         Route::delete('/notification-reports/{id}',        [NotificationReportController::class, 'destroy'])->name('notification-reports.destroy');
+
+        // Cơ cấu đơn vị & hồ sơ nhân sự/khách
+        Route::resource('units', UnitController::class)->except('show');
+        Route::resource('people', PersonController::class)->except('show')->parameters(['people' => 'person']);
 
         Route::resource('delegations', DelegationController::class);
         Route::get('delegations/{delegation}/export', [DelegationExportController::class, 'export'])

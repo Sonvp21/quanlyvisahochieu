@@ -56,9 +56,9 @@
                     <dt class="text-xs font-medium uppercase tracking-wide text-slate-400">Thời gian làm việc</dt>
                     <dd class="mt-1 font-medium text-slate-800">
                         @if($delegation->work_date_from)
-                            {{ $delegation->work_date_from->format('d/m/Y') }}
+                            {{ $delegation->work_date_from->format('H:i d/m/Y') }}
                             @if($delegation->work_date_to && !$delegation->work_date_to->eq($delegation->work_date_from))
-                                <span class="text-slate-400">→</span> {{ $delegation->work_date_to->format('d/m/Y') }}
+                                <span class="text-slate-400">→</span> {{ $delegation->work_date_to->format('H:i d/m/Y') }}
                             @endif
                         @else — @endif
                     </dd>

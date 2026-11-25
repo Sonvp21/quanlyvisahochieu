@@ -25,8 +25,8 @@ class Delegation extends Model
     ];
 
     protected $casts = [
-        'work_date_from' => 'date',
-        'work_date_to' => 'date',
+        'work_date_from' => 'datetime',
+        'work_date_to' => 'datetime',
     ];
 
     public function members()

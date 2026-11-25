@@ -7,6 +7,32 @@ use Carbon\Carbon;
 
 class Student extends Model
 {
+    protected static function booted(): void
+    {
+        static::created(function (Student $student) {
+            Person::firstOrCreate(
+                ['student_id' => $student->id],
+                [
+                    'person_type'   => 'student_intl',
+                    'full_name'     => $student->full_name,
+                    'gender'        => $student->gender,
+                    'date_of_birth' => $student->date_of_birth,
+                    'nationality'   => $student->nationality ?: 'Việt Nam',
+                    'student_code'  => $student->student_code,
+                    'email'         => $student->user?->email,
+                    'phone'         => $student->phone,
+                    'user_id'       => $student->user_id,
+                    'is_active'     => true,
+                ]
+            );
+        });
+    }
+
+    public function person()
+    {
+        return $this->hasOne(Person::class);
+    }
+
     protected $fillable = [
         'user_id',
         'student_code',

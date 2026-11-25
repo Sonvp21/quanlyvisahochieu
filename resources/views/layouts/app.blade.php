@@ -31,6 +31,8 @@
         'admin.passports.*'          => 'Hộ chiếu',
         'admin.visas.*'              => 'Visa',
         'admin.delegations.*'        => 'Đoàn khách nước ngoài',
+        'admin.people.*'             => 'Hồ sơ nhân sự & khách',
+        'admin.units.*'              => 'Cơ cấu đơn vị',
         'admin.notification-reports.*' => 'Báo cáo email',
         'student.dashboard'          => 'Tổng quan',
         'student.profile.*'          => 'Hồ sơ của tôi',

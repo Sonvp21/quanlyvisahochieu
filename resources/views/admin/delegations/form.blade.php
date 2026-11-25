@@ -36,13 +36,13 @@
                           class="mt-1 w-full rounded-lg border-slate-300 text-sm focus:ring-blue-500 focus:border-blue-500">{{ old('purpose', $delegation->purpose) }}</textarea>
             </div>
             <div>
-                <label class="text-sm font-medium text-slate-600">Ngày bắt đầu làm việc</label>
-                <input type="date" name="work_date_from" value="{{ old('work_date_from', $delegation->work_date_from?->format('Y-m-d')) }}"
+                <label class="text-sm font-medium text-slate-600">Thời gian bắt đầu làm việc</label>
+                <input type="datetime-local" name="work_date_from" value="{{ old('work_date_from', $delegation->work_date_from?->format('Y-m-d\TH:i')) }}"
                        class="mt-1 w-full rounded-lg border-slate-300 text-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label class="text-sm font-medium text-slate-600">Ngày kết thúc làm việc</label>
-                <input type="date" name="work_date_to" value="{{ old('work_date_to', $delegation->work_date_to?->format('Y-m-d')) }}"
+                <label class="text-sm font-medium text-slate-600">Thời gian kết thúc làm việc</label>
+                <input type="datetime-local" name="work_date_to" value="{{ old('work_date_to', $delegation->work_date_to?->format('Y-m-d\TH:i')) }}"
                        class="mt-1 w-full rounded-lg border-slate-300 text-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>

@@ -88,9 +88,9 @@
                                 <td class="px-5 py-4 text-slate-600">{{ $delegation->host_unit ?: '—' }}</td>
                                 <td class="whitespace-nowrap px-5 py-4 text-slate-600">
                                     @if($delegation->work_date_from)
-                                        {{ $delegation->work_date_from->format('d/m/Y') }}
+                                        {{ $delegation->work_date_from->format('H:i d/m/Y') }}
                                         @if($delegation->work_date_to && !$delegation->work_date_to->eq($delegation->work_date_from))
-                                            <span class="text-slate-400">→</span> {{ $delegation->work_date_to->format('d/m/Y') }}
+                                            <span class="text-slate-400">→</span> {{ $delegation->work_date_to->format('H:i d/m/Y') }}
                                         @endif
                                     @else — @endif
                                 </td>

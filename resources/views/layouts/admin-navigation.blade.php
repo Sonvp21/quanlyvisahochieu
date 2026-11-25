@@ -10,6 +10,10 @@
             ['Visa', 'admin.visas.index', 'admin.visas.*', 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'],
             ['Đoàn khách nước ngoài', 'admin.delegations.index', 'admin.delegations.*', 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
         ],
+        'Danh mục' => [
+            ['Hồ sơ nhân sự & khách', 'admin.people.index', 'admin.people.*', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+            ['Cơ cấu đơn vị', 'admin.units.index', 'admin.units.*', 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
+        ],
         'Báo cáo' => [
             ['Báo cáo email', 'admin.notification-reports.index', 'admin.notification-reports.*', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
             ['Xuất Excel Mẫu số 01', 'admin.students.export', null, 'M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3'],
@@ -32,7 +36,7 @@
         </span>
         <span class="leading-tight">
             <span class="block text-sm font-bold text-slate-900">GIRC System</span>
-            <span class="block text-[11px] text-slate-400">Visa &amp; Passport Manager</span>
+            <span class="block text-[11px] text-slate-400">Hợp tác quốc tế &amp; Đối ngoại</span>
         </span>
     </a>
 

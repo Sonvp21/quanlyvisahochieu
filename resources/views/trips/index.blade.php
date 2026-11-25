@@ -79,7 +79,29 @@
                 @endif
             </form>
 
-            <div class="overflow-x-auto">
+            {{-- Điện thoại: dạng thẻ --}}
+            <div class="divide-y divide-slate-100 md:hidden">
+                @forelse ($trips as $t)
+                    <a href="{{ route('trips.show', $t) }}" class="block px-4 py-4 transition active:bg-slate-50">
+                        <div class="flex items-start justify-between gap-3">
+                            <p class="min-w-0 flex-1 text-[15px] font-semibold leading-snug text-slate-900">{{ $t->title }}</p>
+                            <span class="shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium {{ $t->status_class }}">{{ $t->status_label }}</span>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-400"><span class="font-mono">{{ $t->code }}</span> · <span class="{{ $t->isIncoming() ? 'text-emerald-600' : 'text-blue-600' }}">{{ $t->direction_label }}</span> · {{ $t->type_label }}</p>
+                        <div class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-slate-600">
+                            <p class="truncate"><span class="text-slate-400">Nước:</span> {{ $t->country }}@if($t->city), {{ $t->city }}@endif</p>
+                            <p class="truncate"><span class="text-slate-400">Số người:</span> {{ $t->members->count() }}</p>
+                            <p class="col-span-2"><span class="text-slate-400">Thời gian:</span> {{ $t->depart_at->format('d/m/Y') }}@unless ($t->depart_at->isSameDay($t->return_at)) → {{ $t->return_at->format('d/m/Y') }}@endunless · {{ $t->days }} ngày</p>
+                            @if ($t->unit)<p class="col-span-2 truncate"><span class="text-slate-400">Đơn vị:</span> {{ $t->unit->name }}</p>@endif
+                        </div>
+                    </a>
+                @empty
+                    <p class="px-4 py-14 text-center text-sm text-slate-400">Chưa có hồ sơ nào.</p>
+                @endforelse
+            </div>
+
+            {{-- Máy tính bảng, máy tính: dạng bảng --}}
+            <div class="hidden overflow-x-auto md:block">
                 <table class="min-w-full text-sm">
                     <thead>
                         <tr class="bg-slate-50/70 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">

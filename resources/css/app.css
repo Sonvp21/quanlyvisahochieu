@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* === ui-gd7: giao diện kiểu ứng dụng (VNeID) === */
+.app-shell { -webkit-tap-highlight-color: transparent; }
+.app-shell input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]):not([type=range]),
+.app-shell select,
+.app-shell textarea { border-radius: .875rem; }
+.app-shell input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]):not([type=range]),
+.app-shell select { min-height: 2.75rem; }
+.app-shell input[type=checkbox], .app-shell input[type=radio] { width: 1.15rem; height: 1.15rem; }
+.app-shell .rounded-lg { border-radius: .875rem; }
+.app-shell .rounded-xl { border-radius: 1rem; }
+.app-shell .rounded-2xl { border-radius: 1.5rem; }
+.app-shell .shadow-sm { box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px -10px rgba(15,23,42,.12); }
+.app-shell button, .app-shell a[class*="rounded-"] { transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease; }
+.app-shell button:not(:disabled):active, .app-shell a[class*="bg-blue-700"]:active { transform: scale(.97); }
+.app-shell button[class*="bg-blue-700"], .app-shell a[class*="bg-blue-700"] { min-height: 2.5rem; }
+.app-shell .overflow-hidden:has(> table), .app-shell .overflow-hidden:has(> div > table) { overflow-x: auto; overflow-y: hidden; }
+.app-shell table thead th { white-space: nowrap; }
+.app-shell h2.text-xl { letter-spacing: -.01em; }
+@media (max-width: 640px) {
+    .app-shell h2.text-xl { font-size: 1.125rem; }
+    .app-shell td, .app-shell th { padding-left: .75rem !important; padding-right: .75rem !important; }
+    .app-shell .grid.md\:grid-cols-2, .app-shell .grid.md\:grid-cols-3 { gap: .75rem; }
+}
+
+/* Mobile: header đã có nút quay lại, ẩn liên kết "‹ quay lại" lặp trong nội dung trang */
+@media (max-width: 1023px) {
+  main > div > a:first-child:has(> svg path[d="M15 19l-7-7 7-7"]),
+  main > div > div:first-child > a:first-child:has(> svg path[d="M15 19l-7-7 7-7"]) {
+    display: none;
+  }
+}
+
+[x-cloak] { display: none !important; }
+
+/* === bảng -> thẻ trên điện thoại === */
+@media (max-width: 767px) {
+  .app-shell main table.rt, .app-shell main table.rt tbody, .app-shell main table.rt tr, .app-shell main table.rt td { display: block; width: 100%; }
+  .app-shell main table.rt { min-width: 0; }
+  .app-shell main table.rt thead { display: none; }
+  .app-shell main table.rt tbody { padding: .25rem .75rem .75rem; background: transparent; }
+  .app-shell main table.rt tbody tr { margin-top: .75rem; padding: .5rem 1rem .75rem; border: 1px solid #e2e8f0 !important; border-radius: 1rem; background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
+  .app-shell main table.rt td { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: .35rem 0 !important; text-align: right; border: 0; white-space: normal; }
+  .app-shell main table.rt td::before { content: attr(data-label); flex-shrink: 0; max-width: 45%; color: #94a3b8; font-size: .75rem; text-align: left; }
+  .app-shell main table.rt td[data-label=""]::before { display: none; }
+  .app-shell main table.rt td:first-child { display: block; padding: .35rem 0 .5rem !important; margin-bottom: .25rem; text-align: left; font-weight: 600; border-bottom: 1px solid #f1f5f9; }
+  .app-shell main table.rt td:first-child::before { display: none; }
+  .app-shell main table.rt td[colspan] { display: block; text-align: center; }
+  .app-shell main table.rt tr:has(td[colspan]) { border: 0 !important; box-shadow: none; background: transparent; }
+}
+
+/* === ô icon đồng bộ (thay ô vuông nền đặc kiểu cũ) === */
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9):has(> svg[class*="text-white"]) { width: 2.5rem; height: 2.5rem; border-radius: 1rem; flex-shrink: 0; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9):has(> svg[class*="text-white"]) > svg { width: 1.25rem; height: 1.25rem; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-blue-"]:has(> svg[class*="text-white"]) { background-color: #eff6ff !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-blue-"]:has(> svg[class*="text-white"]) > svg { color: #1d4ed8 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-indigo-"]:has(> svg[class*="text-white"]) { background-color: #eef2ff !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-indigo-"]:has(> svg[class*="text-white"]) > svg { color: #4338ca !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-emerald-"]:has(> svg[class*="text-white"]) { background-color: #ecfdf5 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-emerald-"]:has(> svg[class*="text-white"]) > svg { color: #047857 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-green-"]:has(> svg[class*="text-white"]) { background-color: #f0fdf4 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-green-"]:has(> svg[class*="text-white"]) > svg { color: #15803d !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-amber-"]:has(> svg[class*="text-white"]) { background-color: #fffbeb !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-amber-"]:has(> svg[class*="text-white"]) > svg { color: #b45309 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-orange-"]:has(> svg[class*="text-white"]) { background-color: #fff7ed !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-orange-"]:has(> svg[class*="text-white"]) > svg { color: #c2410c !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-red-"]:has(> svg[class*="text-white"]) { background-color: #fef2f2 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-red-"]:has(> svg[class*="text-white"]) > svg { color: #b91c1c !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-rose-"]:has(> svg[class*="text-white"]) { background-color: #fff1f2 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-rose-"]:has(> svg[class*="text-white"]) > svg { color: #be123c !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-violet-"]:has(> svg[class*="text-white"]) { background-color: #f5f3ff !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-violet-"]:has(> svg[class*="text-white"]) > svg { color: #6d28d9 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-purple-"]:has(> svg[class*="text-white"]) { background-color: #faf5ff !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-purple-"]:has(> svg[class*="text-white"]) > svg { color: #7e22ce !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-sky-"]:has(> svg[class*="text-white"]) { background-color: #f0f9ff !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-sky-"]:has(> svg[class*="text-white"]) > svg { color: #0369a1 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-teal-"]:has(> svg[class*="text-white"]) { background-color: #f0fdfa !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-teal-"]:has(> svg[class*="text-white"]) > svg { color: #0f766e !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-slate-"]:has(> svg[class*="text-white"]) { background-color: #f1f5f9 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-slate-"]:has(> svg[class*="text-white"]) > svg { color: #334155 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-gray-"]:has(> svg[class*="text-white"]) { background-color: #f3f4f6 !important; }
+.app-shell :is(.w-6.h-6,.w-7.h-7,.w-8.h-8,.w-9.h-9)[class*="bg-gray-"]:has(> svg[class*="text-white"]) > svg { color: #374151 !important; }

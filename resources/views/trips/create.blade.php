@@ -8,7 +8,7 @@
         @if (session('error'))
             <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ session('error') }}</div>
         @endif
-        <form method="POST" action="{{ route('trips.store') }}" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <form method="POST" action="{{ route('trips.store') }}" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             @csrf
             
             @include('trips.form')

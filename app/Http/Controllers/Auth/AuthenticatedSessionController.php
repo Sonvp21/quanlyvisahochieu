@@ -31,15 +31,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        if ($user->role === 'student') {
-            return redirect()->route('student.dashboard');
-        }
-
-        return redirect()->route(in_array($user->role, ['admin', 'bgh', 'htqt'], true) ? 'overview' : 'trips.index');
+        return redirect()->route('home');
     }
 
 

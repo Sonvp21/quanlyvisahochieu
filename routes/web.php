@@ -56,17 +56,7 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', function () {
-    $user = Auth::user();
-
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-
-    if ($user->role === 'student') {
-        return redirect()->route('student.dashboard');
-    }
-
-    return redirect()->route(in_array(auth()->user()->role, ['admin', 'bgh', 'htqt'], true) ? 'overview' : 'trips.index');
+    return redirect()->route('home');
 })->middleware('auth')->name('dashboard');
 
 /*
@@ -222,3 +212,6 @@ Route::middleware(['auth', RoleAny::class . ':admin,bgh,htqt'])->group(function 
     Route::delete('/ke-hoach/{plan}', [AnnualPlanController::class, 'destroy'])->name('plans.destroy');
     Route::post('/ke-hoach/{plan}/ho-so', [AnnualPlanController::class, 'toTrip'])->name('plans.trip');
 });
+
+// Trang chủ dạng lưới ô icon (kiểu VNeID), dùng chung mọi vai trò
+Route::get('/trang-chu', \App\Http\Controllers\HomeController::class)->middleware('auth')->name('home');

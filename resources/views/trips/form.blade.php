@@ -5,7 +5,7 @@
 @endphp
 <div class="space-y-6"
      x-data="tripMembers(@js($people), @js($selected), '{{ route('trips.people.quick') }}', '{{ csrf_token() }}')">
-    <input type="hidden" name="direction" value="{{ $trip->direction ?: 'out' }}">
+    <input hidden type="hidden" name="direction" value="{{ $trip->direction ?: 'out' }}">
 
     @if ($errors->any())
         <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

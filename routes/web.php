@@ -24,6 +24,12 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 use App\Http\Controllers\Admin\DelegationController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MailRuleController;
+use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\Admin\AgreementController;
+use App\Http\Controllers\Admin\ExchangeProgramController;
+use App\Http\Controllers\Admin\ExchangeApplicationController;
+use App\Http\Controllers\TripExpenseController;
 use App\Http\Controllers\Admin\PersonDocumentController;
 use App\Http\Controllers\TripController;
 use App\Http\Middleware\RoleAny;
@@ -103,6 +109,27 @@ Route::middleware(['auth', RoleAny::class . ':admin,htqt'])
         Route::delete('people/{person}/passports/{passport}', [PersonDocumentController::class, 'destroyPassport'])->name('people.passports.destroy');
         Route::delete('people/{person}/visas/{visa}', [PersonDocumentController::class, 'destroyVisa'])->name('people.visas.destroy');
 
+        Route::middleware(RoleAny::class . ':admin')->group(function () {
+            Route::get('mail-rules', [MailRuleController::class, 'index'])->name('mail-rules.index');
+            Route::get('mail-rules/{mailRule}/edit', [MailRuleController::class, 'edit'])->name('mail-rules.edit');
+            Route::put('mail-rules/{mailRule}', [MailRuleController::class, 'update'])->name('mail-rules.update');
+            Route::patch('mail-rules/{mailRule}/toggle', [MailRuleController::class, 'toggle'])->name('mail-rules.toggle');
+            Route::get('mail-logs', [MailRuleController::class, 'logs'])->name('mail-logs.index');
+        });
+
+        // Đối tác, thỏa thuận, trao đổi sinh viên
+        Route::resource('partners', PartnerController::class);
+        Route::get('agreements', [AgreementController::class, 'index'])->name('agreements.index');
+        Route::post('partners/{partner}/agreements', [AgreementController::class, 'store'])->name('partners.agreements.store');
+        Route::patch('agreements/{agreement}/terminate', [AgreementController::class, 'terminate'])->name('agreements.terminate');
+        Route::delete('agreements/{agreement}', [AgreementController::class, 'destroy'])->name('agreements.destroy');
+        Route::get('agreements/{agreement}/file', [AgreementController::class, 'download'])->name('agreements.download');
+        Route::resource('exchange-programs', ExchangeProgramController::class);
+        Route::post('exchange-programs/{exchangeProgram}/applications', [ExchangeApplicationController::class, 'store'])->name('exchange-programs.applications.store');
+        Route::patch('exchange-applications/{application}', [ExchangeApplicationController::class, 'update'])->name('exchange-applications.update');
+        Route::delete('exchange-applications/{application}', [ExchangeApplicationController::class, 'destroy'])->name('exchange-applications.destroy');
+        Route::post('exchange-applications/{application}/trip', [ExchangeApplicationController::class, 'toTrip'])->name('exchange-applications.trip');
+
         Route::resource('delegations', DelegationController::class);
         Route::get('delegations/{delegation}/export', [DelegationExportController::class, 'export'])
             ->name('delegations.export');
@@ -161,6 +188,9 @@ Route::middleware(['auth', RoleAny::class . ':admin,bgh,htqt,unit_manager,staff'
         Route::post('/people', [TripController::class, 'quickPerson'])->name('people.quick');
         Route::get('/{trip}/cong-van', [TripController::class, 'exportWord'])->name('export.word');
         Route::get('/{trip}/phu-luc', [TripController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/{trip}/van-ban/{doc}', [TripController::class, 'document'])->name('document');
+        Route::post('/{trip}/expenses', [TripExpenseController::class, 'store'])->name('expenses.store');
+        Route::delete('/expenses/{expense}', [TripExpenseController::class, 'destroy'])->name('expenses.destroy');
     });
 
 /*

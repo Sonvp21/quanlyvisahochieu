@@ -50,6 +50,17 @@
             <label class="text-sm font-medium text-slate-600">{{ $incoming ? 'Trường / tổ chức / doanh nghiệp cử đoàn' : 'Đơn vị mời / tiếp nhận' }}</label>
             <input type="text" name="host_org" value="{{ old('host_org', $trip->host_org) }}" class="{{ $in }}">
         </div>
+        @if (isset($partners) && $partners->isNotEmpty())
+        <div class="md:col-span-2">
+            <label class="text-sm font-medium text-slate-600">Đối tác trong danh bạ (nếu có)</label>
+            <select name="partner_id" class="{{ $in }}">
+                <option value="">— Không liên kết —</option>
+                @foreach ($partners as $p)
+                    <option value="{{ $p->id }}" @selected(old('partner_id', $trip->partner_id) == $p->id)>{{ $p->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        @endif
         <div>
             <label class="text-sm font-medium text-slate-600">{{ $incoming ? 'Bắt đầu làm việc' : 'Thời gian đi' }} <span class="text-red-500">*</span></label>
             <input type="datetime-local" name="depart_at" value="{{ $dt('depart_at') }}" required class="{{ $in }}">

@@ -163,6 +163,60 @@
                     </table>
                 </div>
 
+                {{-- Kinh phí --}}
+                @php
+                    $plan = $expenses->where('kind', 'plan')->sum('amount');
+                    $actual = $expenses->where('kind', 'actual')->sum('amount');
+                    $fmt = fn ($n) => number_format($n, 0, ',', '.') . ' đ';
+                @endphp
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-base font-semibold text-slate-900">Kinh phí</h3>
+                        <p class="text-sm text-slate-500">
+                            Dự toán <span class="font-semibold text-slate-800">{{ $fmt($plan ?: ($trip->budget_estimate ?? 0)) }}</span>
+                            · Thực chi <span class="font-semibold {{ $plan && $actual > $plan ? 'text-red-600' : 'text-slate-800' }}">{{ $fmt($actual) }}</span>
+                        </p>
+                    </div>
+                    @if ($expenses->isNotEmpty())
+                        <table class="mt-4 min-w-full text-sm">
+                            <thead><tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                <th class="py-2 pr-3">Khoản mục</th><th class="py-2 pr-3">Loại</th><th class="py-2 pr-3 text-right">Số tiền</th><th class="py-2"></th>
+                            </tr></thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach ($expenses as $e)
+                                    <tr>
+                                        <td class="py-2 pr-3 text-slate-800">{{ \App\Models\TripExpense::CATEGORIES[$e->category] ?? $e->category }}
+                                            @if ($e->description || $e->funding_source)<span class="block text-xs text-slate-400">{{ collect([$e->description, $e->funding_source ? 'Nguồn: ' . $e->funding_source : null])->filter()->implode(' · ') }}</span>@endif</td>
+                                        <td class="py-2 pr-3 text-slate-600">{{ \App\Models\TripExpense::KINDS[$e->kind] ?? $e->kind }}</td>
+                                        <td class="whitespace-nowrap py-2 pr-3 text-right font-medium text-slate-800">{{ $fmt($e->amount) }}</td>
+                                        <td class="py-2 text-right">
+                                            @if ($canFiles)
+                                                <form method="POST" action="{{ route('trips.expenses.destroy', $e) }}" onsubmit="return confirm('Xóa khoản chi này?')">@csrf @method('DELETE')<button class="text-xs text-red-600 hover:text-red-700">Xóa</button></form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p class="mt-3 text-sm text-slate-400">Chưa ghi khoản nào.</p>
+                    @endif
+                    @if ($canFiles)
+                        <details class="mt-4" @if ($errors->has('amount') || $errors->has('category')) open @endif>
+                            <summary class="cursor-pointer text-sm font-medium text-blue-700 hover:text-blue-800">+ Ghi khoản dự toán / thực chi</summary>
+                            <form method="POST" action="{{ route('trips.expenses.store', $trip) }}" class="mt-3 grid grid-cols-1 gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-4 md:grid-cols-3">
+                                @csrf
+                                <select name="category" class="rounded-lg border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600">@foreach (\App\Models\TripExpense::CATEGORIES as $k => $v)<option value="{{ $k }}">{{ $v }}</option>@endforeach</select>
+                                <select name="kind" class="rounded-lg border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600">@foreach (\App\Models\TripExpense::KINDS as $k => $v)<option value="{{ $k }}">{{ $v }}</option>@endforeach</select>
+                                <div><input type="number" min="0" name="amount" placeholder="Số tiền (đồng) *" required class="w-full rounded-lg border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600">@error('amount')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                                <input type="text" name="description" placeholder="Diễn giải" class="rounded-lg border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600 md:col-span-2">
+                                <input type="text" name="funding_source" placeholder="Nguồn kinh phí" class="rounded-lg border-slate-300 text-sm focus:border-blue-600 focus:ring-blue-600">
+                                <div class="md:col-span-3"><button class="rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">Lưu khoản chi</button></div>
+                            </form>
+                        </details>
+                    @endif
+                </div>
+
                 {{-- Báo cáo sau chuyến --}}
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h3 class="text-base font-semibold text-slate-900">{{ $trip->isIncoming() ? 'Báo cáo kết quả tiếp đoàn' : 'Báo cáo sau chuyến' }}</h3>
@@ -191,6 +245,39 @@
             </div>
 
             <div class="space-y-6">
+                {{-- Biểu mẫu Word --}}
+                @if (!empty($docs))
+                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <h3 class="text-sm font-semibold text-slate-900">Biểu mẫu Word</h3>
+                        <ul class="mt-3 space-y-1.5">
+                            @foreach ($docs as $key => $label)
+                                <li>
+                                    <a href="{{ route('trips.document', [$trip, $key]) }}" class="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                                        <span>{{ $label }}</span>
+                                        <span class="text-xs font-medium text-blue-700">Tải .docx</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <p class="mt-2 text-xs text-slate-400">Bản tạm, điền sẵn từ hồ sơ. Số văn bản và chữ ký bổ sung sau khi tải.</p>
+                    </div>
+                @endif
+
+                @if ($mailLogs->isNotEmpty())
+                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <h3 class="text-sm font-semibold text-slate-900">Email đã gửi</h3>
+                        <ul class="mt-3 space-y-3">
+                            @foreach ($mailLogs as $l)
+                                <li class="text-xs">
+                                    <p class="font-medium text-slate-700">{{ $l->subject }}</p>
+                                    <p class="mt-0.5 break-words text-slate-500">{{ $l->recipients }}</p>
+                                    <p class="mt-0.5 {{ $l->status === 'sent' ? 'text-emerald-600' : 'text-red-600' }}">{{ $l->status === 'sent' ? 'Đã gửi' : 'Lỗi: ' . $l->error }} · {{ $l->created_at->format('H:i d/m/Y') }}</p>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 {{-- Lịch sử phê duyệt --}}
                 <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <h3 class="text-sm font-semibold text-slate-900">Lịch sử xử lý</h3>

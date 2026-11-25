@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 Schedule::command('notifications:send-expiry')
     //->everyMinute(); // test
     ->dailyAt('07:45');
+
+\Illuminate\Support\Facades\Schedule::command('trips:remind')->dailyAt('08:00');
+\Illuminate\Support\Facades\Schedule::command('agreements:remind')->weeklyOn(1, '08:00');

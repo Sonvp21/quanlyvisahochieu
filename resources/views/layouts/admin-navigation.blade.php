@@ -13,10 +13,16 @@
         'Đối ngoại' => [
             ['Đoàn ra & đoàn vào', 'trips.index', 'trips.*', 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
         ],
+        'Hợp tác' => [
+            ['Đối tác & thỏa thuận', 'admin.partners.index', 'admin.partners.*', 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['MOU & hạn hiệu lực', 'admin.agreements.index', 'admin.agreements.*', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+            ['Trao đổi sinh viên', 'admin.exchange-programs.index', 'admin.exchange-*', 'M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z'],
+        ],
         'Danh mục' => [
             ['Hồ sơ nhân sự & khách', 'admin.people.index', 'admin.people.*', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
             ['Cơ cấu đơn vị', 'admin.units.index', 'admin.units.*', 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
             ['Tài khoản', 'admin.users.index', 'admin.users.*', 'M15 7a3 3 0 11-6 0 3 3 0 016 0zM3 20a6 6 0 0112 0M17 11l2 2 4-4'],
+            ['Quy tắc email', 'admin.mail-rules.index', 'admin.mail-*', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
         ],
         'Báo cáo' => [
             ['Báo cáo email', 'admin.notification-reports.index', 'admin.notification-reports.*', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
@@ -51,7 +57,7 @@
                 <p class="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ $group }}</p>
                 <div class="space-y-0.5">
                     @foreach ($items as [$label, $routeName, $pattern, $icon])
-                        @continue($routeName === 'admin.users.index' && Auth::user()->role !== 'admin')
+                        @continue(in_array($routeName, ['admin.users.index', 'admin.mail-rules.index'], true) && Auth::user()->role !== 'admin')
                         @php $active = $pattern && request()->routeIs($pattern); @endphp
                         <a href="{{ route($routeName) }}" @click="sidebarOpen = false"
                            class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition

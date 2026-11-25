@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Admin\DelegationExportController;
 use App\Http\Controllers\Admin\DelegationWordExportController;
 use App\Models\Delegation;
+use App\Models\MailLog;
+use App\Models\Partner;
 use App\Models\Person;
 use App\Models\Trip;
 use App\Models\TripFile;
 use App\Models\Unit;
+use App\Services\TripDocuments;
+use App\Services\TripMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -163,6 +167,9 @@ class TripController extends Controller
             'canReport'  => in_array($trip->status, ['approved', 'completed'], true) && $trip->isMemberOrOwner($user),
             'canFiles'   => $user->role === 'admin' || $user->role === 'htqt' || $user->id === $trip->created_by,
             'flow'       => $trip->flowSteps(),
+            'docs'       => TripDocuments::available($trip),
+            'expenses'   => $trip->expenses()->get(),
+            'mailLogs'   => in_array($user->role, ['admin', 'htqt'], true) ? MailLog::where('trip_id', $trip->id)->latest('id')->limit(8)->get() : collect(),
             'canExport'  => $trip->isIncoming() && ($user->role === 'admin' || $user->role === 'htqt'
                 || ($user->id === $trip->created_by && in_array($trip->status, ['approved', 'completed'], true))),
         ]);
@@ -196,6 +203,8 @@ class TripController extends Controller
                 $trip->update(['status' => 'pending_' . $flow[0], 'submitted_at' => now()]);
             }
         });
+
+        app(TripMailer::class)->fire($trip->fresh()->status === 'approved' ? 'approved' : 'step_pending', $trip->fresh());
 
         return redirect()->route('trips.show', $trip)->with('success', 'Đã gửi hồ sơ đi phê duyệt.');
     }
@@ -237,6 +246,11 @@ class TripController extends Controller
             }
         });
 
+        $fresh = $trip->fresh();
+        app(TripMailer::class)->fire(match ($fresh->status) {
+            'approved' => 'approved', 'returned' => 'returned', 'rejected' => 'rejected', default => 'step_pending',
+        }, $fresh);
+
         return redirect()->route('trips.show', $trip)->with('success', 'Đã ghi nhận ý kiến của bạn.');
     }
 
@@ -265,7 +279,22 @@ class TripController extends Controller
         );
         $trip->update(['status' => 'completed']);
 
+        app(TripMailer::class)->fire('report_submitted', $trip->fresh());
+
         return redirect()->route('trips.show', $trip)->with('success', 'Đã nộp báo cáo sau chuyến.');
+    }
+
+    // ------------------------------------------------------------------ Biểu mẫu Word
+    public function document(Request $request, Trip $trip, string $doc)
+    {
+        $this->authorizeView($request, $trip);
+        abort_unless(array_key_exists($doc, TripDocuments::available($trip)), 404);
+
+        [$name, $bin] = (new TripDocuments())->build($trip, $doc);
+
+        return response()->streamDownload(function () use ($bin) {
+            echo $bin;
+        }, $name, ['Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
     }
 
     // ------------------------------------------------------------------ Tệp đính kèm
@@ -431,6 +460,7 @@ class TripController extends Controller
             'trip'     => $trip,
             'types'    => Trip::typesFor($trip->direction ?: 'out'),
             'units'    => Unit::flatTree(),
+            'partners' => Partner::where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'people'   => Person::with('unit')->where('is_active', true)->orderBy('full_name')->get()
                 ->map(fn ($p) => ['id' => $p->id, 'name' => trim(($p->academic_title ? $p->academic_title . '. ' : '') . $p->full_name), 'sub' => $p->unit?->name ?? ($p->organization ?: $p->type_label), 'type' => $p->person_type])
                 ->values(),
@@ -454,6 +484,7 @@ class TripController extends Controller
             'country'         => 'required|string|max:100',
             'city'            => 'nullable|string|max:150',
             'host_org'        => 'nullable|string|max:255',
+            'partner_id'      => 'nullable|exists:partners,id',
             'depart_at'       => 'required|date',
             'return_at'       => 'required|date|after_or_equal:depart_at',
             'unit_id'         => 'nullable|exists:units,id',

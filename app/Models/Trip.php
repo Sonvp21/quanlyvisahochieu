@@ -53,7 +53,7 @@ class Trip extends Model
     ];
 
     protected $fillable = [
-        'code', 'direction', 'work_location', 'accommodation', 'reception_notes', 'delegation_id', 'trip_type', 'title', 'purpose', 'country', 'city', 'host_org',
+        'code', 'partner_id', 'exchange_application_id', 'direction', 'work_location', 'accommodation', 'reception_notes', 'delegation_id', 'trip_type', 'title', 'purpose', 'country', 'city', 'host_org',
         'depart_at', 'return_at', 'unit_id', 'created_by', 'budget_estimate', 'funding_source',
         'status', 'submitted_at', 'decided_at', 'report_due_at', 'notes',
     ];
@@ -74,6 +74,8 @@ class Trip extends Model
     public function approvals() { return $this->hasMany(TripApproval::class)->orderBy('id'); }
     public function report()    { return $this->hasOne(TripReport::class); }
     public function files()     { return $this->hasMany(TripFile::class)->orderBy('id'); }
+    public function expenses()  { return $this->hasMany(TripExpense::class)->orderBy('kind')->orderBy('id'); }
+    public function partner()   { return $this->belongsTo(Partner::class); }
 
     public function members()
     {

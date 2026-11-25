@@ -25,6 +25,10 @@ use App\Http\Controllers\Admin\DelegationController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MailRuleController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\OverviewController;
+use App\Http\Controllers\StatsController;
+use App\Http\Controllers\AnnualPlanController;
 use App\Http\Controllers\Admin\PartnerController;
 use App\Http\Controllers\Admin\AgreementController;
 use App\Http\Controllers\Admin\ExchangeProgramController;
@@ -62,7 +66,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('student.dashboard');
     }
 
-    return redirect()->route('trips.index');
+    return redirect()->route(in_array(auth()->user()->role, ['admin', 'bgh', 'htqt'], true) ? 'overview' : 'trips.index');
 })->middleware('auth')->name('dashboard');
 
 /*
@@ -115,6 +119,7 @@ Route::middleware(['auth', RoleAny::class . ':admin,htqt'])
             Route::put('mail-rules/{mailRule}', [MailRuleController::class, 'update'])->name('mail-rules.update');
             Route::patch('mail-rules/{mailRule}/toggle', [MailRuleController::class, 'toggle'])->name('mail-rules.toggle');
             Route::get('mail-logs', [MailRuleController::class, 'logs'])->name('mail-logs.index');
+            Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         });
 
         // Đối tác, thỏa thuận, trao đổi sinh viên
@@ -205,3 +210,15 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// Tổng quan, thống kê, kế hoạch năm (BGH xem; admin và phòng chuyên trách được sửa kế hoạch)
+Route::middleware(['auth', RoleAny::class . ':admin,bgh,htqt'])->group(function () {
+    Route::get('/tong-quan', [OverviewController::class, 'index'])->name('overview');
+    Route::get('/thong-ke', [StatsController::class, 'index'])->name('stats.index');
+    Route::get('/thong-ke/xuat', [StatsController::class, 'export'])->name('stats.export');
+    Route::get('/ke-hoach', [AnnualPlanController::class, 'index'])->name('plans.index');
+    Route::post('/ke-hoach', [AnnualPlanController::class, 'store'])->name('plans.store');
+    Route::patch('/ke-hoach/{plan}', [AnnualPlanController::class, 'update'])->name('plans.update');
+    Route::delete('/ke-hoach/{plan}', [AnnualPlanController::class, 'destroy'])->name('plans.destroy');
+    Route::post('/ke-hoach/{plan}/ho-so', [AnnualPlanController::class, 'toTrip'])->name('plans.trip');
+});

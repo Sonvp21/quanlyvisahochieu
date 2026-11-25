@@ -6,7 +6,15 @@
     $f = request('filter');
     $onTrips = request()->routeIs('trips.*') && !request()->routeIs('trips.create');
 
-    $groups = [
+    $groups = [];
+    if (in_array($u->role, ['admin', 'bgh', 'htqt'], true)) {
+        $groups['Tổng quan'] = [
+            ['Tổng quan', route('overview'), request()->routeIs('overview'), 'M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-3a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z'],
+            ['Thống kê', route('stats.index'), request()->routeIs('stats.*'), 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+            ['Kế hoạch năm', route('plans.index'), request()->routeIs('plans.*'), 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+        ];
+    }
+    $groups += [
         'Đoàn ra & đoàn vào' => array_values(array_filter([
             ['Tất cả hồ sơ', route('trips.index'), $onTrips && !$dir && !$f, 'M4 6h16M4 12h16M4 18h16'],
             ['Đoàn ra', route('trips.index', ['direction' => 'out']), $onTrips && $dir === 'out' && !$f, 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],

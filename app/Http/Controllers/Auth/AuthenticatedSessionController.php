@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('student.dashboard');
         }
 
-        return redirect()->route('trips.index');
+        return redirect()->route(in_array($user->role, ['admin', 'bgh', 'htqt'], true) ? 'overview' : 'trips.index');
     }
 
 

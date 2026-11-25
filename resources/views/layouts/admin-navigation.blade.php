@@ -13,6 +13,11 @@
         'Đối ngoại' => [
             ['Đoàn ra & đoàn vào', 'trips.index', 'trips.*', 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
         ],
+        'Tổng quan' => [
+            ['Tổng quan', 'overview', 'overview', 'M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-3a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z'],
+            ['Thống kê', 'stats.index', 'stats.*', 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+            ['Kế hoạch năm', 'plans.index', 'plans.*', 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+        ],
         'Hợp tác' => [
             ['Đối tác & thỏa thuận', 'admin.partners.index', 'admin.partners.*', 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
             ['MOU & hạn hiệu lực', 'admin.agreements.index', 'admin.agreements.*', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
@@ -23,6 +28,7 @@
             ['Cơ cấu đơn vị', 'admin.units.index', 'admin.units.*', 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
             ['Tài khoản', 'admin.users.index', 'admin.users.*', 'M15 7a3 3 0 11-6 0 3 3 0 016 0zM3 20a6 6 0 0112 0M17 11l2 2 4-4'],
             ['Quy tắc email', 'admin.mail-rules.index', 'admin.mail-*', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
+            ['Nhật ký thao tác', 'admin.audit-logs.index', 'admin.audit-logs.*', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
         ],
         'Báo cáo' => [
             ['Báo cáo email', 'admin.notification-reports.index', 'admin.notification-reports.*', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
@@ -57,7 +63,7 @@
                 <p class="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ $group }}</p>
                 <div class="space-y-0.5">
                     @foreach ($items as [$label, $routeName, $pattern, $icon])
-                        @continue(in_array($routeName, ['admin.users.index', 'admin.mail-rules.index'], true) && Auth::user()->role !== 'admin')
+                        @continue(in_array($routeName, ['admin.users.index', 'admin.mail-rules.index', 'admin.audit-logs.index'], true) && Auth::user()->role !== 'admin')
                         @php $active = $pattern && request()->routeIs($pattern); @endphp
                         <a href="{{ route($routeName) }}" @click="sidebarOpen = false"
                            class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition

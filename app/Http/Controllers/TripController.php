@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\DelegationExportController;
+use App\Http\Controllers\Admin\DelegationWordExportController;
+use App\Models\Delegation;
 use App\Models\Person;
 use App\Models\Trip;
 use App\Models\TripFile;
@@ -36,6 +39,9 @@ class TripController extends Controller
         if ($request->filled('type')) {
             $query->where('trip_type', $request->type);
         }
+        if (in_array($request->direction, ['in', 'out'], true)) {
+            $query->where('direction', $request->direction);
+        }
         if ($request->filled('year')) {
             $query->whereYear('depart_at', (int) $request->year);
         }
@@ -67,11 +73,16 @@ class TripController extends Controller
     public function create(Request $request)
     {
         $user = $request->user();
-        $trip = new Trip(['trip_type' => 'cong_tac', 'unit_id' => $user->unit_id]);
+        $direction = $request->direction === 'in' ? 'in' : 'out';
+        $trip = new Trip([
+            'direction' => $direction,
+            'trip_type' => $direction === 'in' ? 'giao_su' : 'cong_tac',
+            'unit_id'   => $user->unit_id,
+        ]);
         $selected = [];
 
-        // Cán bộ tự làm hồ sơ cho mình: chọn sẵn chính họ
-        if ($user->person) {
+        // Đoàn ra: cán bộ tự làm hồ sơ cho mình thì chọn sẵn chính họ
+        if ($direction === 'out' && $user->person) {
             $selected[] = ['person_id' => $user->person->id, 'role' => 'Trưởng đoàn'];
         }
 
@@ -84,8 +95,7 @@ class TripController extends Controller
 
         $trip = DB::transaction(function () use ($request, $data) {
             $trip = Trip::create($data + [
-                'code'       => Trip::nextCode(),
-                'direction'  => 'out',
+                'code'       => Trip::nextCode($data['direction']),
                 'status'     => 'draft',
                 'created_by' => $request->user()->id,
             ]);
@@ -153,6 +163,8 @@ class TripController extends Controller
             'canReport'  => in_array($trip->status, ['approved', 'completed'], true) && $trip->isMemberOrOwner($user),
             'canFiles'   => $user->role === 'admin' || $user->role === 'htqt' || $user->id === $trip->created_by,
             'flow'       => $trip->flowSteps(),
+            'canExport'  => $trip->isIncoming() && ($user->role === 'admin' || $user->role === 'htqt'
+                || ($user->id === $trip->created_by && in_array($trip->status, ['approved', 'completed'], true))),
         ]);
     }
 
@@ -297,6 +309,96 @@ class TripController extends Controller
         return back()->with('success', 'Đã xóa tệp.');
     }
 
+
+    // ------------------------------------------------------------------ Thêm nhanh khách (đoàn vào)
+    public function quickPerson(Request $request)
+    {
+        $data = $request->validate([
+            'full_name'      => 'required|string|max:255',
+            'academic_title' => 'nullable|string|max:100',
+            'gender'         => 'nullable|in:male,female,other',
+            'date_of_birth'  => 'nullable|date|before:today',
+            'nationality'    => 'nullable|string|max:100',
+            'position'       => 'nullable|string|max:255',
+            'organization'   => 'nullable|string|max:255',
+        ]);
+
+        $person = Person::create($data + ['person_type' => 'guest', 'nationality' => $data['nationality'] ?? 'Việt Nam', 'is_active' => true]);
+
+        return response()->json([
+            'id'   => $person->id,
+            'name' => trim(($person->academic_title ? $person->academic_title . '. ' : '') . $person->full_name),
+            'sub'  => $person->organization ?: $person->type_label,
+            'type' => $person->person_type,
+        ]);
+    }
+
+    // ------------------------------------------------------------------ Công văn báo đoàn (đoàn vào)
+    public function exportWord(Request $request, Trip $trip)
+    {
+        $delegation = $this->delegationFor($request, $trip);
+
+        return app(DelegationWordExportController::class)->export($delegation);
+    }
+
+    public function exportExcel(Request $request, Trip $trip)
+    {
+        $delegation = $this->delegationFor($request, $trip);
+
+        return app(DelegationExportController::class)->export($delegation);
+    }
+
+    /** Lấy (hoặc tạo từ hồ sơ đoàn vào) bản "công văn báo đoàn" để xuất Word/Excel */
+    private function delegationFor(Request $request, Trip $trip): Delegation
+    {
+        $u = $request->user();
+        abort_unless($trip->isIncoming(), 404);
+        $this->authorizeView($request, $trip);
+        abort_unless($u->role === 'admin' || $u->role === 'htqt'
+            || ($u->id === $trip->created_by && in_array($trip->status, ['approved', 'completed'], true)), 403);
+
+        if ($trip->delegation) {
+            return $trip->delegation;
+        }
+
+        $trip->load(['members.passports', 'members.visas', 'unit']);
+
+        return DB::transaction(function () use ($trip) {
+            $delegation = Delegation::create([
+                'host_unit'      => $trip->unit?->name ?? $trip->host_org,
+                'purpose'        => $trip->title . ($trip->purpose ? ' — ' . $trip->purpose : ''),
+                'work_date_from' => $trip->depart_at,
+                'work_date_to'   => $trip->return_at,
+                'work_location'  => $trip->work_location ?: $trip->unit?->name,
+                'accommodation_name' => $trip->accommodation,
+                'status'         => 'draft',
+                'notes'          => $trip->notes,
+                'created_by'     => $trip->created_by,
+            ]);
+
+            foreach ($trip->members as $p) {
+                $passport = $p->passports->sortByDesc('expiry_date')->first();
+                $visa     = $p->visas->sortByDesc('expiry_date')->first();
+
+                $delegation->members()->create([
+                    'full_name'       => trim(($p->academic_title ? $p->academic_title . '. ' : '') . $p->full_name),
+                    'gender'          => $p->gender === 'female' ? 'Nữ' : 'Nam',
+                    'date_of_birth'   => $p->date_of_birth,
+                    'nationality'     => $p->nationality ?: 'Việt Nam',
+                    'occupation'      => $p->position ?: $p->organization,
+                    'passport_type'   => 'Phổ thông',
+                    'passport_no'     => $passport?->passport_number,
+                    'passport_expiry' => $passport?->expiry_date,
+                    'visa_no'         => $visa?->visa_number,
+                ]);
+            }
+
+            $trip->update(['delegation_id' => $delegation->id]);
+
+            return $delegation;
+        });
+    }
+
     // ------------------------------------------------------------------ Nội bộ
     private function authorizeView(Request $request, Trip $trip): void
     {
@@ -327,9 +429,10 @@ class TripController extends Controller
 
         return [
             'trip'     => $trip,
+            'types'    => Trip::typesFor($trip->direction ?: 'out'),
             'units'    => Unit::flatTree(),
             'people'   => Person::with('unit')->where('is_active', true)->orderBy('full_name')->get()
-                ->map(fn ($p) => ['id' => $p->id, 'name' => trim(($p->academic_title ? $p->academic_title . '. ' : '') . $p->full_name), 'sub' => $p->unit?->name ?? ($p->organization ?: $p->type_label)])
+                ->map(fn ($p) => ['id' => $p->id, 'name' => trim(($p->academic_title ? $p->academic_title . '. ' : '') . $p->full_name), 'sub' => $p->unit?->name ?? ($p->organization ?: $p->type_label), 'type' => $p->person_type])
                 ->values(),
             'selected' => $selected,
         ];
@@ -337,8 +440,15 @@ class TripController extends Controller
 
     private function validated(Request $request): array
     {
+        $direction = $request->input('direction', ($request->route('trip') instanceof Trip ? $request->route('trip')->direction : 'out'));
+        $direction = $direction === 'in' ? 'in' : 'out';
+
         $data = $request->validate([
-            'trip_type'       => ['required', Rule::in(array_keys(Trip::TYPES))],
+            'direction'       => 'nullable|in:in,out',
+            'trip_type'       => ['required', Rule::in(array_keys(Trip::typesFor($direction)))],
+            'work_location'   => 'nullable|string|max:255',
+            'accommodation'   => 'nullable|string|max:255',
+            'reception_notes' => 'nullable|string|max:3000',
             'title'           => 'required|string|max:255',
             'purpose'         => 'nullable|string|max:3000',
             'country'         => 'required|string|max:100',
@@ -358,6 +468,7 @@ class TripController extends Controller
         ]);
 
         unset($data['members']);
+        $data['direction'] = $direction;
 
         return $data;
     }

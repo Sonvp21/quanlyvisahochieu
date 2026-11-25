@@ -24,6 +24,7 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 use App\Http\Controllers\Admin\DelegationController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PersonDocumentController;
 use App\Http\Controllers\TripController;
 use App\Http\Middleware\RoleAny;
 use App\Http\Controllers\Admin\PersonController;
@@ -63,7 +64,7 @@ Route::get('/dashboard', function () {
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', RoleAny::class . ':admin,htqt'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -95,8 +96,12 @@ Route::middleware(['auth', 'role:admin'])
 
         // Cơ cấu đơn vị & hồ sơ nhân sự/khách
         Route::resource('units', UnitController::class)->except('show');
-        Route::resource('users', UserController::class)->except('show');
+        Route::resource('users', UserController::class)->except('show')->middleware(RoleAny::class . ':admin');
         Route::resource('people', PersonController::class)->except('show')->parameters(['people' => 'person']);
+        Route::post('people/{person}/passports', [PersonDocumentController::class, 'storePassport'])->name('people.passports.store');
+        Route::post('people/{person}/visas', [PersonDocumentController::class, 'storeVisa'])->name('people.visas.store');
+        Route::delete('people/{person}/passports/{passport}', [PersonDocumentController::class, 'destroyPassport'])->name('people.passports.destroy');
+        Route::delete('people/{person}/visas/{visa}', [PersonDocumentController::class, 'destroyVisa'])->name('people.visas.destroy');
 
         Route::resource('delegations', DelegationController::class);
         Route::get('delegations/{delegation}/export', [DelegationExportController::class, 'export'])
@@ -153,6 +158,9 @@ Route::middleware(['auth', RoleAny::class . ':admin,bgh,htqt,unit_manager,staff'
         Route::get('/{trip}/report', [TripController::class, 'reportForm'])->name('report');
         Route::post('/{trip}/report', [TripController::class, 'reportStore'])->name('report.store');
         Route::post('/{trip}/files', [TripController::class, 'uploadFile'])->name('files.upload');
+        Route::post('/people', [TripController::class, 'quickPerson'])->name('people.quick');
+        Route::get('/{trip}/cong-van', [TripController::class, 'exportWord'])->name('export.word');
+        Route::get('/{trip}/phu-luc', [TripController::class, 'exportExcel'])->name('export.excel');
     });
 
 /*

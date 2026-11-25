@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Trip extends Model
 {
-    public const TYPES = [
+    /** Đoàn ra */
+    public const TYPES_OUT = [
         'cong_tac'  => 'Công tác',
         'hoi_nghi'  => 'Hội nghị, hội thảo',
         'dao_tao'   => 'Đào tạo, bồi dưỡng',
@@ -17,6 +18,19 @@ class Trip extends Model
         'khao_sat'  => 'Khảo sát đối tác',
         'khac'      => 'Khác',
     ];
+
+    /** Đoàn vào */
+    public const TYPES_IN = [
+        'giao_su'      => 'Giáo sư, chuyên gia',
+        'doanh_nghiep' => 'Doanh nghiệp',
+        'to_chuc'      => 'Tổ chức, hiệp hội',
+        'co_quan_ngoai_giao' => 'Cơ quan đại diện, ngoại giao',
+        'doi_tac_hoc_thuat'  => 'Trường, viện đối tác',
+        'khach_khac'   => 'Khách khác',
+    ];
+
+    /** Tất cả loại hình (dùng cho bộ lọc) */
+    public const TYPES = self::TYPES_OUT + self::TYPES_IN;
 
     /** [nhãn, class màu] */
     public const STATUSES = [
@@ -39,7 +53,7 @@ class Trip extends Model
     ];
 
     protected $fillable = [
-        'code', 'direction', 'trip_type', 'title', 'purpose', 'country', 'city', 'host_org',
+        'code', 'direction', 'work_location', 'accommodation', 'reception_notes', 'delegation_id', 'trip_type', 'title', 'purpose', 'country', 'city', 'host_org',
         'depart_at', 'return_at', 'unit_id', 'created_by', 'budget_estimate', 'funding_source',
         'status', 'submitted_at', 'decided_at', 'report_due_at', 'notes',
     ];
@@ -55,6 +69,7 @@ class Trip extends Model
 
     // ---------- Quan hệ ----------
     public function unit()      { return $this->belongsTo(Unit::class); }
+    public function delegation() { return $this->belongsTo(Delegation::class); }
     public function creator()   { return $this->belongsTo(User::class, 'created_by'); }
     public function approvals() { return $this->hasMany(TripApproval::class)->orderBy('id'); }
     public function report()    { return $this->hasOne(TripReport::class); }
@@ -68,7 +83,14 @@ class Trip extends Model
     // ---------- Hiển thị ----------
     public function getStatusLabelAttribute(): string { return self::STATUSES[$this->status][0] ?? $this->status; }
     public function getStatusClassAttribute(): string { return self::STATUSES[$this->status][1] ?? 'bg-slate-100 text-slate-600'; }
-    public function getTypeLabelAttribute(): string   { return self::TYPES[$this->trip_type] ?? $this->trip_type; }
+    public function getTypeLabelAttribute(): string   { return (self::TYPES_OUT + self::TYPES_IN)[$this->trip_type] ?? $this->trip_type; }
+    public function isIncoming(): bool                { return $this->direction === 'in'; }
+    public function getDirectionLabelAttribute(): string { return $this->isIncoming() ? 'Đoàn vào' : 'Đoàn ra'; }
+
+    public static function typesFor(string $direction): array
+    {
+        return $direction === 'in' ? self::TYPES_IN : self::TYPES_OUT;
+    }
 
     public function getDaysAttribute(): int
     {
@@ -149,13 +171,14 @@ class Trip extends Model
             || in_array($u->role, ['admin', 'htqt'], true);
     }
 
-    public static function nextCode(): string
+    public static function nextCode(string $direction = 'out'): string
     {
         $year = now()->year;
-        $n = static::whereYear('created_at', $year)->count() + 1;
+        $prefix = $direction === 'in' ? 'DV' : 'DR';
+        $n = static::where('direction', $direction)->whereYear('created_at', $year)->count() + 1;
 
         do {
-            $code = sprintf('DR-%d-%04d', $year, $n++);
+            $code = sprintf('%s-%d-%04d', $prefix, $year, $n++);
         } while (static::where('code', $code)->exists());
 
         return $code;

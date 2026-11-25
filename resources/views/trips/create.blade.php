@@ -2,9 +2,9 @@
     <div class="mx-auto max-w-4xl space-y-5">
         <a href="{{ route('trips.index') }}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-700">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            Chuyến công tác nước ngoài
+            Đoàn ra &amp; đoàn vào
         </a>
-        <h2 class="text-xl font-semibold text-slate-900">Tạo hồ sơ đi công tác</h2>
+        <h2 class="text-xl font-semibold text-slate-900">{{ $trip->direction === 'in' ? 'Hồ sơ tiếp đoàn vào' : 'Tạo hồ sơ đi công tác' }}</h2>
         @if (session('error'))
             <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ session('error') }}</div>
         @endif

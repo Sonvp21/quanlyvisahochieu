@@ -2,14 +2,23 @@
 @php
     $u = Auth::user();
     $approver = in_array($u->role, ['bgh', 'htqt', 'unit_manager'], true);
-    $items = [
-        ['Chuyến công tác', route('trips.index'), request()->routeIs('trips.*') && !request()->routeIs('trips.create') && !request('filter'), 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+    $dir = request('direction');
+    $f = request('filter');
+    $onTrips = request()->routeIs('trips.*') && !request()->routeIs('trips.create');
+
+    $groups = [
+        'Đoàn ra & đoàn vào' => array_values(array_filter([
+            ['Tất cả hồ sơ', route('trips.index'), $onTrips && !$dir && !$f, 'M4 6h16M4 12h16M4 18h16'],
+            ['Đoàn ra', route('trips.index', ['direction' => 'out']), $onTrips && $dir === 'out' && !$f, 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
+            ['Đoàn vào', route('trips.index', ['direction' => 'in']), $onTrips && $dir === 'in' && !$f, 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-4-4'],
+            $approver ? ['Chờ tôi duyệt', route('trips.index', ['filter' => 'to_approve']), $f === 'to_approve', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'] : null,
+            ['Hồ sơ của tôi', route('trips.index', ['filter' => 'mine']), $f === 'mine', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+        ])),
+        'Tạo mới' => [
+            ['Đi công tác (đoàn ra)', route('trips.create'), request()->routeIs('trips.create') && $dir !== 'in', 'M12 4v16m8-8H4'],
+            ['Tiếp đoàn vào', route('trips.create', ['direction' => 'in']), request()->routeIs('trips.create') && $dir === 'in', 'M12 4v16m8-8H4'],
+        ],
     ];
-    if ($approver) {
-        $items[] = ['Chờ tôi duyệt', route('trips.index', ['filter' => 'to_approve']), request('filter') === 'to_approve', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'];
-    }
-    $items[] = ['Chuyến của tôi', route('trips.index', ['filter' => 'mine']), request('filter') === 'mine', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'];
-    $items[] = ['Tạo hồ sơ đi công tác', route('trips.create'), request()->routeIs('trips.create'), 'M12 4v16m8-8H4'];
 @endphp
 
 <div x-cloak x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"
@@ -30,22 +39,24 @@
     </a>
 
     <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-        <div>
-            <p class="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Đoàn ra</p>
-            <div class="space-y-0.5">
-                @foreach ($items as [$label, $href, $active, $icon])
-                    <a href="{{ $href }}" @click="sidebarOpen = false"
-                       class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
-                              {{ $active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-                        @if ($active)<span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-blue-600"></span>@endif
-                        <svg class="w-[18px] h-[18px] shrink-0 {{ $active ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="{{ $icon }}"/>
-                        </svg>
-                        <span class="truncate">{{ $label }}</span>
-                    </a>
-                @endforeach
+        @foreach ($groups as $group => $items)
+            <div>
+                <p class="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ $group }}</p>
+                <div class="space-y-0.5">
+                    @foreach ($items as [$label, $href, $active, $icon])
+                        <a href="{{ $href }}" @click="sidebarOpen = false"
+                           class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
+                                  {{ $active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                            @if ($active)<span class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r bg-blue-600"></span>@endif
+                            <svg class="w-[18px] h-[18px] shrink-0 {{ $active ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="{{ $icon }}"/>
+                            </svg>
+                            <span class="truncate">{{ $label }}</span>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-        </div>
+        @endforeach
     </nav>
 
     <div class="shrink-0 border-t border-slate-100 p-3">

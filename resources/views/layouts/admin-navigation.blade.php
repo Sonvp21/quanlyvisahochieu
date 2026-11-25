@@ -8,10 +8,10 @@
             ['Sinh viên', 'admin.students.index', 'admin.students.*', 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-4-4'],
             ['Hộ chiếu', 'admin.passports.index', 'admin.passports.*', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
             ['Visa', 'admin.visas.index', 'admin.visas.*', 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'],
-            ['Đoàn khách nước ngoài', 'admin.delegations.index', 'admin.delegations.*', 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['Công văn báo đoàn', 'admin.delegations.index', 'admin.delegations.*', 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
         ],
-        'Đoàn ra' => [
-            ['Chuyến công tác nước ngoài', 'trips.index', 'trips.*', 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
+        'Đối ngoại' => [
+            ['Đoàn ra & đoàn vào', 'trips.index', 'trips.*', 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8'],
         ],
         'Danh mục' => [
             ['Hồ sơ nhân sự & khách', 'admin.people.index', 'admin.people.*', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
@@ -51,6 +51,7 @@
                 <p class="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ $group }}</p>
                 <div class="space-y-0.5">
                     @foreach ($items as [$label, $routeName, $pattern, $icon])
+                        @continue($routeName === 'admin.users.index' && Auth::user()->role !== 'admin')
                         @php $active = $pattern && request()->routeIs($pattern); @endphp
                         <a href="{{ route($routeName) }}" @click="sidebarOpen = false"
                            class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
@@ -77,7 +78,7 @@
             </span>
             <div class="min-w-0 flex-1 leading-tight">
                 <p class="truncate text-sm font-medium text-slate-800">{{ Auth::user()->name }}</p>
-                <p class="text-[11px] text-slate-400">Quản trị viên</p>
+                <p class="text-[11px] text-slate-400">{{ \App\Models\User::ROLES[Auth::user()->role] ?? '' }}</p>
             </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

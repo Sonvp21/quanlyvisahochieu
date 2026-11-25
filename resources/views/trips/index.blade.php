@@ -4,14 +4,29 @@
 
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h2 class="text-xl font-semibold text-slate-900">Chuyến công tác nước ngoài</h2>
-                <p class="mt-0.5 text-sm text-slate-500">Hồ sơ xin đi công tác, phê duyệt và báo cáo sau chuyến.</p>
+                <h2 class="text-xl font-semibold text-slate-900">Đoàn ra &amp; đoàn vào</h2>
+                <p class="mt-0.5 text-sm text-slate-500">Hồ sơ xin đi công tác, tiếp đoàn khách nước ngoài, phê duyệt và báo cáo.</p>
             </div>
-            <a href="{{ route('trips.create') }}"
-               class="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-800">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Tạo hồ sơ đi công tác
-            </a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('trips.create', ['direction' => 'in']) }}"
+                   class="inline-flex items-center gap-1.5 rounded-lg border border-blue-700 bg-white px-3.5 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-50">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tiếp đoàn vào
+                </a>
+                <a href="{{ route('trips.create') }}"
+                   class="inline-flex items-center gap-1.5 rounded-lg bg-blue-700 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-800">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Đi công tác (đoàn ra)
+                </a>
+            </div>
+        </div>
+
+        {{-- Chuyển nhanh giữa đoàn ra / đoàn vào --}}
+        <div class="flex gap-1 rounded-xl bg-slate-100 p-1 text-sm font-medium sm:w-fit">
+            @foreach ([['', 'Tất cả'], ['out', 'Đoàn ra'], ['in', 'Đoàn vào']] as [$d, $dl])
+                <a href="{{ route('trips.index', array_filter(array_merge(request()->except('page', 'direction'), ['direction' => $d]))) }}"
+                   class="rounded-lg px-4 py-1.5 transition {{ (request('direction') ?? '') === $d ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">{{ $dl }}</a>
+            @endforeach
         </div>
 
         {{-- Thẻ thống kê (bấm để lọc) --}}
@@ -37,6 +52,7 @@
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <form method="GET" class="flex flex-wrap items-center gap-2 border-b border-slate-100 p-4">
                 <input type="hidden" name="filter" value="{{ request('filter') }}">
+                <input type="hidden" name="direction" value="{{ request('direction') }}">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm mã, tên chuyến đi, nước, đơn vị mời..."
                        class="min-w-[220px] max-w-md flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20">
                 <select name="status" onchange="this.form.submit()" class="rounded-lg border border-slate-300 bg-slate-50 py-2 pl-3 pr-8 text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
@@ -58,7 +74,7 @@
                     @endforeach
                 </select>
                 <button class="rounded-lg bg-slate-800 px-3.5 py-2 text-sm font-medium text-white hover:bg-slate-900">Lọc</button>
-                @if (request()->hasAny(['search', 'status', 'type', 'year', 'filter']))
+                @if (request()->hasAny(['search', 'status', 'type', 'year', 'filter', 'direction']))
                     <a href="{{ route('trips.index') }}" class="px-1 text-sm text-slate-500 hover:text-slate-700">Xóa lọc</a>
                 @endif
             </form>
@@ -68,7 +84,7 @@
                     <thead>
                         <tr class="bg-slate-50/70 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                             <th class="px-5 py-3">Chuyến đi</th>
-                            <th class="px-5 py-3">Nước / nơi đến</th>
+                            <th class="px-5 py-3">Nước / đối tác</th>
                             <th class="px-5 py-3">Thời gian</th>
                             <th class="px-5 py-3">Đơn vị</th>
                             <th class="px-5 py-3 text-center">Số người</th>
@@ -80,9 +96,9 @@
                             <tr class="transition hover:bg-slate-50/70">
                                 <td class="px-5 py-3.5">
                                     <a href="{{ route('trips.show', $t) }}" class="font-medium text-slate-900 hover:text-blue-700">{{ $t->title }}</a>
-                                    <p class="mt-0.5 text-xs text-slate-400"><span class="font-mono">{{ $t->code }}</span> · {{ $t->type_label }}</p>
+                                    <p class="mt-0.5 text-xs text-slate-400"><span class="font-mono">{{ $t->code }}</span> · <span class="{{ $t->isIncoming() ? 'text-emerald-600' : 'text-blue-600' }}">{{ $t->direction_label }}</span> · {{ $t->type_label }}</p>
                                 </td>
-                                <td class="px-5 py-3.5 text-slate-600">{{ $t->country }}@if($t->city), {{ $t->city }}@endif</td>
+                                <td class="px-5 py-3.5 text-slate-600">{{ $t->country }}@if($t->city), {{ $t->city }}@endif @if($t->isIncoming() && $t->host_org)<p class="text-xs text-slate-400">{{ $t->host_org }}</p>@endif</td>
                                 <td class="whitespace-nowrap px-5 py-3.5 text-slate-600">
                                     {{ $t->depart_at->format('d/m/Y') }}
                                     @unless ($t->depart_at->isSameDay($t->return_at)) <span class="text-slate-400">→</span> {{ $t->return_at->format('d/m/Y') }} @endunless

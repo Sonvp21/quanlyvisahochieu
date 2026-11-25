@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-4xl space-y-5">
         <a href="{{ route('trips.index') }}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-700">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            Chuyến công tác nước ngoài
+            Đoàn ra &amp; đoàn vào
         </a>
         <h2 class="text-xl font-semibold text-slate-900">Sửa hồ sơ {{ $trip->code }}</h2>
         @if (session('error'))

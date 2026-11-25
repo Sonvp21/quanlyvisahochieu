@@ -5,7 +5,7 @@
             {{ $trip->title }}
         </a>
         <div>
-            <h2 class="text-xl font-semibold text-slate-900">Báo cáo kết quả chuyến công tác</h2>
+            <h2 class="text-xl font-semibold text-slate-900">{{ $trip->isIncoming() ? 'Báo cáo kết quả tiếp đoàn' : 'Báo cáo kết quả chuyến công tác' }}</h2>
             <p class="mt-0.5 text-sm text-slate-500">{{ $trip->code }} · {{ $trip->country }} · {{ $trip->time_range }}</p>
         </div>
 

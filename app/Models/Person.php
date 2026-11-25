@@ -57,6 +57,11 @@ class Person extends Model
         return $this->hasMany(Visa::class);
     }
 
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class, 'trip_members')->withPivot('role_in_trip');
+    }
+
     public function getTypeLabelAttribute(): string
     {
         return self::TYPES[$this->person_type] ?? $this->person_type;

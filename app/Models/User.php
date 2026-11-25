@@ -12,6 +12,15 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    public const ROLES = [
+        'admin'        => 'Quản trị viên',
+        'bgh'          => 'Ban Giám hiệu',
+        'htqt'         => 'Phòng chuyên trách đối ngoại',
+        'unit_manager' => 'Lãnh đạo đơn vị',
+        'staff'        => 'Cán bộ, giảng viên',
+        'student'      => 'Sinh viên quốc tế',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -61,5 +70,11 @@ class User extends Authenticatable
     public function person()
     {
         return $this->hasOne(Person::class);
+    }
+
+    /** Id đơn vị của người dùng và mọi đơn vị con cháu */
+    public function unitSubtreeIds(): array
+    {
+        return $this->unit_id ? (Unit::find($this->unit_id)?->selfAndDescendantIds() ?? []) : [];
     }
 }

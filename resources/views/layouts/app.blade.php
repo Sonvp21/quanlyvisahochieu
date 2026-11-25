@@ -31,6 +31,8 @@
         'admin.passports.*'          => 'Hộ chiếu',
         'admin.visas.*'              => 'Visa',
         'admin.delegations.*'        => 'Đoàn khách nước ngoài',
+        'trips.*'                    => 'Chuyến công tác nước ngoài',
+        'admin.users.*'              => 'Tài khoản',
         'admin.people.*'             => 'Hồ sơ nhân sự & khách',
         'admin.units.*'              => 'Cơ cấu đơn vị',
         'admin.notification-reports.*' => 'Báo cáo email',
@@ -53,6 +55,8 @@
         @include('layouts.admin-navigation')
     @elseif ($role === 'student')
         @include('layouts.student-navigation')
+    @elseif ($role)
+        @include('layouts.portal-navigation')
     @endif
 
     <div class="flex-1 min-w-0 flex flex-col min-h-screen">
@@ -89,7 +93,7 @@
                             </span>
                             <span class="hidden md:block text-left leading-tight">
                                 <span class="block text-sm font-medium text-slate-800">{{ $authUser->name }}</span>
-                                <span class="block text-[11px] text-slate-400">{{ $role === 'admin' ? 'Quản trị viên' : 'Sinh viên quốc tế' }}</span>
+                                <span class="block text-[11px] text-slate-400">{{ \App\Models\User::ROLES[$role] ?? $role }}</span>
                             </span>
                         </a>
                     @endif

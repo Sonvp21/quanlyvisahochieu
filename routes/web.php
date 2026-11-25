@@ -23,6 +23,9 @@ use App\Http\Controllers\Student\VisaController as StudentVisa;
 
 use App\Http\Controllers\Admin\DelegationController;
 use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\TripController;
+use App\Http\Middleware\RoleAny;
 use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Admin\DelegationExportController;
 use App\Http\Controllers\Admin\DelegationWordExportController;
@@ -52,7 +55,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('student.dashboard');
     }
 
-    abort(403, 'Không có quyền truy cập');
+    return redirect()->route('trips.index');
 })->middleware('auth')->name('dashboard');
 
 /*
@@ -92,6 +95,7 @@ Route::middleware(['auth', 'role:admin'])
 
         // Cơ cấu đơn vị & hồ sơ nhân sự/khách
         Route::resource('units', UnitController::class)->except('show');
+        Route::resource('users', UserController::class)->except('show');
         Route::resource('people', PersonController::class)->except('show')->parameters(['people' => 'person']);
 
         Route::resource('delegations', DelegationController::class);
@@ -122,6 +126,33 @@ Route::middleware(['auth', 'role:student'])
 
         // Trang hộ chiếu riêng (student/passport.blade.php)
         Route::get('/passport', [StudentPassport::class, 'index'])->name('passport.index');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| CHUYẾN CÔNG TÁC NƯỚC NGOÀI (đoàn ra) — mọi vai trò trừ sinh viên quốc tế
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', RoleAny::class . ':admin,bgh,htqt,unit_manager,staff'])
+    ->prefix('trips')
+    ->name('trips.')
+    ->group(function () {
+        Route::get('/', [TripController::class, 'index'])->name('index');
+        Route::get('/create', [TripController::class, 'create'])->name('create');
+        Route::post('/', [TripController::class, 'store'])->name('store');
+
+        Route::get('/files/{file}', [TripController::class, 'downloadFile'])->name('files.download');
+        Route::delete('/files/{file}', [TripController::class, 'deleteFile'])->name('files.delete');
+
+        Route::get('/{trip}', [TripController::class, 'show'])->name('show');
+        Route::get('/{trip}/edit', [TripController::class, 'edit'])->name('edit');
+        Route::put('/{trip}', [TripController::class, 'update'])->name('update');
+        Route::delete('/{trip}', [TripController::class, 'destroy'])->name('destroy');
+        Route::post('/{trip}/submit', [TripController::class, 'submit'])->name('submit');
+        Route::post('/{trip}/decide', [TripController::class, 'decide'])->name('decide');
+        Route::get('/{trip}/report', [TripController::class, 'reportForm'])->name('report');
+        Route::post('/{trip}/report', [TripController::class, 'reportStore'])->name('report.store');
+        Route::post('/{trip}/files', [TripController::class, 'uploadFile'])->name('files.upload');
     });
 
 /*

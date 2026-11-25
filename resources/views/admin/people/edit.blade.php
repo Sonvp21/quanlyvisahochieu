@@ -40,5 +40,31 @@
                 @endif
             </div>
         </div>
+
+        {{-- Lịch sử chuyến công tác --}}
+        @php
+            $personTrips = $person->trips()->with('unit')->orderByDesc('depart_at')->get();
+            $doneTrips = $personTrips->whereIn('status', ['approved', 'completed']);
+            $daysAbroad = $doneTrips->sum(fn ($t) => $t->days);
+        @endphp
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="text-base font-semibold text-slate-900">Lịch sử chuyến công tác</h3>
+                <p class="text-xs text-slate-500">{{ $doneTrips->count() }} chuyến đã duyệt · {{ $daysAbroad }} ngày</p>
+            </div>
+            <div class="mt-4 space-y-2 text-sm">
+                @forelse ($personTrips as $t)
+                    <a href="{{ route('trips.show', $t) }}" class="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-4 py-2.5 transition hover:bg-blue-50">
+                        <span class="min-w-0">
+                            <span class="block truncate font-medium text-slate-800">{{ $t->title }}</span>
+                            <span class="text-xs text-slate-400">{{ $t->country }} · {{ $t->depart_at->format('d/m/Y') }} → {{ $t->return_at->format('d/m/Y') }}</span>
+                        </span>
+                        <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-medium {{ $t->status_class }}">{{ $t->status_label }}</span>
+                    </a>
+                @empty
+                    <p class="text-slate-400">Chưa tham gia chuyến công tác nào.</p>
+                @endforelse
+            </div>
+        </div>
     </div>
 </x-app-layout>
